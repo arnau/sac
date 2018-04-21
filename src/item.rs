@@ -45,7 +45,7 @@ pub fn to_json(item: &Item) -> Result<String, serde_json::Error> {
 /// Deserialises a valid JSON object into an Item. Note that the JSON object
 /// must have valid keys as restricted by the canonicalisation algorithm.
 pub fn from_json(s: &str) -> Result<Item, serde_json::Error> {
-    serde_json::from_str::<Item>(&s)
+    Item::from_str(s)
 }
 
 /// Represents an Item resource.
@@ -87,7 +87,7 @@ impl Item {
 impl FromStr for Item {
     type Err = serde_json::Error;
     fn from_str(s: &str) -> Result<Item, Self::Err> {
-        from_json(s)
+        serde_json::from_str::<Item>(s)
     }
 }
 
