@@ -117,3 +117,12 @@ $ sac mint --force --pk a '{"a":"x", "b":"y","c","z"}'
 add-item	{"a":"x","b":"y","c","z"}
 append-entry	a	2018-04-13T15:12:00Z	sha-256:ecd26bd54edf231ecbfbe361c97e0f720068f562e26c32696e777b6ed494cf73
 ```
+
+## Development
+
+Lint with Clippy. E.g.
+
+```sh
+cargo +nightly install clippy
+cargo +nightly clippy
+```

@@ -59,7 +59,7 @@ pub fn from_json(s: &str) -> Result<Item, serde_json::Error> {
 /// let item = sac::item::from_json(raw).unwrap();
 /// assert_eq!(item.hash(), "5dd4fe3b0de91882dae86b223ca531b5c8f2335d9ee3fd0ab18dfdc2871d0c61");
 /// ```
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Default)]
 pub struct Item(Blob);
 impl Item {
     pub fn new() -> Self {
