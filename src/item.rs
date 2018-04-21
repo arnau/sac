@@ -1,5 +1,6 @@
 use failure;
 use serde_json;
+use std::str::FromStr;
 use std::collections::BTreeMap;
 use std;
 
@@ -80,6 +81,13 @@ impl Item {
     // TODO: Generalise algorithm
     pub fn id(&self) -> String {
         format!("sha-256:{}", self.hash())
+    }
+}
+
+impl FromStr for Item {
+    type Err = serde_json::Error;
+    fn from_str(s: &str) -> Result<Item, Self::Err> {
+        from_json(s)
     }
 }
 

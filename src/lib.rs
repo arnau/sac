@@ -1,13 +1,15 @@
-// #![no_std]
-// #[macro_use] extern crate std;
+#[macro_use]
+extern crate log;
 
 #[macro_use]
 extern crate failure;
 
 #[macro_use]
 extern crate lazy_static;
+
 extern crate regex;
 extern crate ring;
+// https://github.com/RustCrypto/hashes
 
 extern crate serde;
 #[macro_use]
