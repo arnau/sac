@@ -2,12 +2,13 @@
 extern crate clap;
 extern crate env_logger;
 #[macro_use]
+extern crate failure;
+#[macro_use]
 extern crate log;
 
 extern crate sac;
-
+mod commands;
 use std::process;
-use sac::{digest, item};
 
 use clap::{App, Arg, SubCommand};
 
@@ -50,40 +51,26 @@ fn main() {
 
     match matches.subcommand() {
         ("item", Some(item_matches)) => match item_matches.subcommand() {
-            ("canon", Some(canon_matches)) => {
-                let itemr = value_t!(canon_matches, "input", item::Item);
+            ("canon", Some(sub_matches)) => {
+                let raw = sub_matches.value_of("input").unwrap();
 
-                match itemr {
-                    Ok(item) => println!("{}", item::to_json(&item).unwrap()),
+                match commands::item_canon_command(raw) {
+                    Ok(json) => println!("{}", json),
                     Err(err) => {
-                        println!("{}", err.message);
+                        eprintln!("{}", err);
                         process::exit(1)
                     }
                 }
             }
-            ("hash", Some(hash_matches)) => {
-                let raw = hash_matches.value_of("input").unwrap();
-                let itemr = item::from_json(raw);
+            ("hash", Some(sub_matches)) => {
+                let raw = sub_matches.value_of("input").unwrap();
+                let force_flag = sub_matches.is_present("force");
 
-                match itemr {
-                    Ok(item) => {
-                        let hash = item.hash();
-
-                        if hash_matches.is_present("force") {
-                            println!("{}", hash);
-                        } else {
-                            let raw_hash = digest::to_hex(digest::digest(raw).as_ref());
-
-                            if raw_hash == hash {
-                                println!("{}", hash);
-                            } else {
-                                eprintln!("The given item is not canonical");
-                                process::exit(1);
-                            }
-                        }
-                    }
+                match commands::item_hash_command(raw, force_flag) {
+                    Ok(hash) => println!("{}", hash),
                     Err(err) => {
                         eprintln!("{}", err);
+                        process::exit(1)
                     }
                 }
             }
