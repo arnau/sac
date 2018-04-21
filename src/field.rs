@@ -3,7 +3,6 @@ use regex::Regex;
 use std::fmt;
 use serde::de::{self, Deserialize, Deserializer, Visitor};
 
-
 #[derive(Debug, Fail)]
 pub enum FieldError {
     #[fail(display = "invalid field name {}", name)]
@@ -12,12 +11,10 @@ pub enum FieldError {
     UnknownField { name: String },
 }
 
-
 // The spec requires a fieldname to be [a-z-]. The constructor `from_str`
 // ensures this constraint is met.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 pub struct Fieldname(String);
-
 
 impl FromStr for Fieldname {
     type Err = FieldError;
@@ -28,7 +25,9 @@ impl FromStr for Fieldname {
         }
 
         if RE.is_match(&key) {
-            Err(FieldError::InvalidFieldname { name: key.to_owned() })
+            Err(FieldError::InvalidFieldname {
+                name: key.to_owned(),
+            })
         } else {
             Ok(Fieldname(key.to_owned()))
         }
@@ -51,16 +50,17 @@ impl<'de> Visitor<'de> for FieldnameVisitor {
     }
 
     fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-        where E: de::Error
+    where
+        E: de::Error,
     {
         Fieldname::from_str(value).map_err(de::Error::custom)
     }
 }
 
-
 impl<'de> Deserialize<'de> for Fieldname {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where D: Deserializer<'de>
+    where
+        D: Deserializer<'de>,
     {
         deserializer.deserialize_str(FieldnameVisitor)
     }

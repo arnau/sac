@@ -38,7 +38,8 @@ impl ToString for Value {
 // See https://docs.serde.rs/src/serde_json/ser.rs.html#1395-1415
 impl Serialize for Value {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where S: Serializer
+    where
+        S: Serializer,
     {
         serializer.serialize_str(&self.0)
     }
@@ -54,21 +55,21 @@ impl<'de> Visitor<'de> for ValueVisitor {
     }
 
     fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-        where E: de::Error
+    where
+        E: de::Error,
     {
         Value::from_str(value).map_err(de::Error::custom)
     }
 }
 
-
 impl<'de> Deserialize<'de> for Value {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where D: Deserializer<'de>
+    where
+        D: Deserializer<'de>,
     {
         deserializer.deserialize_str(ValueVisitor)
     }
 }
-
 
 #[cfg(test)]
 mod tests {

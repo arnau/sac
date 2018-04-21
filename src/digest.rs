@@ -9,7 +9,6 @@ pub fn to_hex(xs: &[u8]) -> String {
     xs.iter().map(|b| format!("{:02x}", b)).collect()
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

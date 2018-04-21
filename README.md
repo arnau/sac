@@ -120,9 +120,17 @@ append-entry	a	2018-04-13T15:12:00Z	sha-256:ecd26bd54edf231ecbfbe361c97e0f720068
 
 ## Development
 
-Lint with Clippy. E.g.
+Lint with Clippy:
 
 ```sh
 cargo +nightly install clippy
 cargo +nightly clippy
+```
+
+
+Format with rustfmt:
+
+```sh
+rustup component add rustfmt-preview
+cargo fmt
 ```

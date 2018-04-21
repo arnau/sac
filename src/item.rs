@@ -1,24 +1,21 @@
 use failure;
 use serde_json;
-use std::collections::{BTreeMap};
+use std::collections::BTreeMap;
 use std;
 
 use regex::{Captures, Regex};
 use digest;
 
-
 // use serde::de::{self, Deserialize, Deserializer, Visitor, MapAccess};
-use serde::ser::{Serialize, Serializer, SerializeMap};
+use serde::ser::{Serialize, SerializeMap, Serializer};
 
 use field::Fieldname;
 use value::Value;
-
 
 // TODO: Consolidate errors
 pub type FResult<T> = std::result::Result<T, failure::Error>;
 
 type Blob = BTreeMap<Fieldname, Value>;
-
 
 // https://docs.rs/serde-transcode/1.0.0/serde_transcode/
 
@@ -88,7 +85,8 @@ impl Item {
 
 impl Serialize for Item {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where S: Serializer
+    where
+        S: Serializer,
     {
         let mut map = serializer.serialize_map(Some(self.0.len()))?;
         for (k, v) in &self.0 {
@@ -97,7 +95,6 @@ impl Serialize for Item {
         map.end()
     }
 }
-
 
 // TODO: Review if it's better to handle deserialisation by hand
 // struct CanonicalVisitor;
@@ -135,9 +132,9 @@ fn uppercase_hex(s: &str) -> String {
         static ref RE: Regex = Regex::new(r#"\\u([a-f0-9]{4})"#).unwrap();
     }
 
-    RE.replace_all(s, |c: &Captures| format!("\\u{}", &c[1].to_uppercase())).to_string()
+    RE.replace_all(s, |c: &Captures| format!("\\u{}", &c[1].to_uppercase()))
+        .to_string()
 }
-
 
 #[cfg(test)]
 mod tests {
