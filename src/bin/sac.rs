@@ -13,13 +13,24 @@ use std::process;
 use clap::{App, Arg, SubCommand};
 
 fn main() {
-    let matches = App::new("sac")
+    // TODO: Move to a man page
+    let item_examples = r#"
+EXAMPLES
+
+    $ sac item canon '{"foo": "abc", "bar": "xyz"}'
+    {"bar":"xyz","foo":"abc"}
+
+    $ sac item hash '{"bar":"xyz","foo":"abc"}'
+    5dd4fe3b0de91882dae86b223ca531b5c8f2335d9ee3fd0ab18dfdc2871d0c61
+"#;
+    let matches = App::new(crate_name!())
         .version(crate_version!())
         .author(crate_authors!())
         .about("Registers toolbelt")
         .subcommand(
             SubCommand::with_name("item")
                 .about("Manage items")
+                .after_help(item_examples)
                 .subcommand(
                     SubCommand::with_name("canon")
                         .aliases(&["fix"])
@@ -33,7 +44,7 @@ fn main() {
                 )
                 .subcommand(
                     SubCommand::with_name("hash")
-                        .about("Hash item")
+                        .about("Compute the hash of the given item")
                         .arg(
                             Arg::with_name("input")
                                 .help("The item as JSON")
@@ -81,6 +92,7 @@ fn main() {
             println!("No subcommand was used");
             unimplemented!()
         }
-        _ => unreachable!(),
+        // Unknown command
+        _ => process::exit(127),
     }
 }

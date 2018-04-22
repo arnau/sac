@@ -61,6 +61,7 @@ impl Item {
         Item(BTreeMap::new())
     }
 
+    // TODO: Add key, value validation here. Result<(), Error>
     pub fn insert(&mut self, k: Fieldname, v: Value) {
         self.0.insert(k, v);
     }
