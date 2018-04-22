@@ -13,16 +13,6 @@ use std::process;
 use clap::{App, Arg, SubCommand};
 
 fn main() {
-    // TODO: Move to a man page
-    let item_examples = r#"
-EXAMPLES
-
-    $ sac item canon '{"foo": "abc", "bar": "xyz"}'
-    {"bar":"xyz","foo":"abc"}
-
-    $ sac item hash '{"bar":"xyz","foo":"abc"}'
-    5dd4fe3b0de91882dae86b223ca531b5c8f2335d9ee3fd0ab18dfdc2871d0c61
-"#;
     let matches = App::new(crate_name!())
         .version(crate_version!())
         .author(crate_authors!())
@@ -30,7 +20,6 @@ EXAMPLES
         .subcommand(
             SubCommand::with_name("item")
                 .about("Manage items")
-                .after_help(item_examples)
                 .subcommand(
                     SubCommand::with_name("canon")
                         .aliases(&["fix"])

@@ -17,14 +17,7 @@ cp target/release/sac $MYBINS/sac
 
 ## Usage
 
-Use the `help` command to get started.
-
-```sh
-sac help
-```
-
-You should always expect an exit code of `0` when the command succeeds.
-Failure codes are being designed so in the meantime all of them are `1`.
+See the [manual](MANUAL.md)
 
 
 ### Items
@@ -88,16 +81,6 @@ $ sac item canon --format csv --input foo.csv
 
 ### Mint item
 
-
-```
-$ sac item add --force '{"a":"x", "b":"y","c","z"}'
-add-item	{"a":"x","b":"y","c","z"}
-
-$ sac entry append --pk a 'add-item	{"a":"x", "b":"y","c","z"}'
-append-entry	a	2018-04-13T15:12:00Z	sha-256:ecd26bd54edf231ecbfbe361c97e0f720068f562e26c32696e777b6ed494cf73
-```
-
-Or
 
 ```
 $ sac mint --force --pk a '{"a":"x", "b":"y","c","z"}'

@@ -1,0 +1,50 @@
+.TH sac 1 "" "sac 0.1.0"
+.SH NAME
+.PP
+sac \- A set of tools to work with Registers
+.SH SYNOPSIS
+.PP
+\f[B]sac\f[] [\f[I]SUBCOMMAND\f[]]
+.PP
+\f[B]sac\f[] item [\f[I]SUBCOMMAND\f[]]
+.SH DESCRIPTION
+.PP
+\f[B]sac\f[] is a set of tools to work with Registers from porcelain
+down to plumbing.
+.PP
+You should always expect an exit code of \f[C]0\f[] when the command
+succeeds.
+Failure codes are being designed so in the meantime all of them are
+\f[C]1\f[].
+.SS Items
+.IP \[bu] 2
+\f[C]item\ canon\f[] \- Takes an item and transforms it into its
+canonical form.
+.IP \[bu] 2
+\f[C]item\ hash\f[] \- Takes an item and generates its hash.
+.SH EXAMPLES
+.PP
+Canonicalise an item:
+.IP
+.nf
+\f[C]
+$\ sac\ item\ canon\ \[aq]{"foo":\ "abc",\ "bar":\ "xyz"}\[aq]
+{"bar":"xyz","foo":"abc"}
+\f[]
+.fi
+.PP
+Hash an item:
+.IP
+.nf
+\f[C]
+$\ sac\ item\ hash\ \[aq]{"bar":"xyz","foo":"abc"}\[aq]
+5dd4fe3b0de91882dae86b223ca531b5c8f2335d9ee3fd0ab18dfdc2871d0c61
+\f[]
+.fi
+.SH AUTHOR
+.PP
+Copyright 2018 Arnau Siches (asiches\@gmail.com).
+This software carries no warranty of any kind.
+.PP
+The Sac source code and all documentation may be downloaded
+from <https://github.com/arnau/sac>.
