@@ -1,9 +1,7 @@
-use failure;
+use failure::Error;
 use serde_json;
 use std::str::FromStr;
 use std::collections::BTreeMap;
-use std;
-
 use regex::{Captures, Regex};
 use digest;
 
@@ -12,9 +10,6 @@ use serde::ser::{Serialize, SerializeMap, Serializer};
 
 use field::Fieldname;
 use value::Value;
-
-// TODO: Consolidate errors
-pub type FResult<T> = std::result::Result<T, failure::Error>;
 
 type Blob = BTreeMap<Fieldname, Value>;
 
@@ -38,13 +33,15 @@ type Blob = BTreeMap<Fieldname, Value>;
 /// {"foo": "abc", "bar": "xyz"} # => Ok: {"bar":"xyz","foo":"abc"}
 /// {"Foo": "abc"}               # => Error: invalid field name
 /// ```
-pub fn to_json(item: &Item) -> Result<String, serde_json::Error> {
-    serde_json::to_string(&item).map(|x| uppercase_hex(&x))
+pub fn to_json(item: &Item) -> Result<String, Error> {
+    let s = serde_json::to_string(&item).map(|x| uppercase_hex(&x))?;
+
+    Ok(s)
 }
 
 /// Deserialises a valid JSON object into an Item. Note that the JSON object
 /// must have valid keys as restricted by the canonicalisation algorithm.
-pub fn from_json(s: &str) -> Result<Item, serde_json::Error> {
+pub fn from_json(s: &str) -> Result<Item, Error> {
     Item::from_str(s)
 }
 
@@ -85,9 +82,11 @@ impl Item {
 }
 
 impl FromStr for Item {
-    type Err = serde_json::Error;
+    type Err = Error;
     fn from_str(s: &str) -> Result<Item, Self::Err> {
-        serde_json::from_str::<Item>(s)
+        let item = serde_json::from_str::<Item>(s)?;
+
+        Ok(item)
     }
 }
 

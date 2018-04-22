@@ -18,6 +18,7 @@ env_logger = "0.5.9"
 failure = "0.1"
 lazy_static = "1"
 log = "0.4.0"
+#https://crates.io/crates/slog
 regex = "0.2"
 ring = "0.12"
 serde = "1.0"

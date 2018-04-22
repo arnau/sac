@@ -102,5 +102,4 @@ mod tests {
 
         assert_eq!(format!("{:?}", res), expected);
     }
-
 }

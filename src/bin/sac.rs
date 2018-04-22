@@ -54,7 +54,7 @@ fn main() {
             ("canon", Some(sub_matches)) => {
                 let raw = sub_matches.value_of("input").unwrap();
 
-                match commands::item_canon_command(raw) {
+                match commands::item_canon(raw) {
                     Ok(json) => println!("{}", json),
                     Err(err) => {
                         eprintln!("{}", err);
@@ -66,7 +66,7 @@ fn main() {
                 let raw = sub_matches.value_of("input").unwrap();
                 let force_flag = sub_matches.is_present("force");
 
-                match commands::item_hash_command(raw, force_flag) {
+                match commands::item_hash(raw, force_flag) {
                     Ok(hash) => println!("{}", hash),
                     Err(err) => {
                         eprintln!("{}", err);

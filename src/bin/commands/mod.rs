@@ -1,15 +1,12 @@
 use sac::{digest, item};
-use failure::{Error, ResultExt};
+use failure::Error;
 
-pub fn item_canon_command(raw: &str) -> Result<String, Error> {
-    let item = item::from_json(raw).context("Error while consuming json")?;
-    let s = item::to_json(&item).context("Error serialising json")?;
-
-    Ok(s)
+pub fn item_canon(raw: &str) -> Result<String, Error> {
+    item::from_json(raw).and_then(|item| item::to_json(&item))
 }
 
-pub fn item_hash_command(raw: &str, force_flag: bool) -> Result<String, Error> {
-    let item = item::from_json(raw).context("Error while consuming json")?;
+pub fn item_hash(raw: &str, force_flag: bool) -> Result<String, Error> {
+    let item = item::from_json(raw)?;
     let hash = item.hash();
 
     if force_flag {
