@@ -1,0 +1,8 @@
+$if(has-tables)$
+.\"t
+$endif$
+.TH sac 1 "$date$" "$version$"
+$body$
+.PP
+The Sac source code and all documentation may be downloaded
+from <https://github.com/arnau/sac>.

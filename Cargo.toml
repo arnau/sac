@@ -3,11 +3,26 @@ name = "sac"
 version = "0.1.0"
 authors = ["Arnau Siches <asiches@gmail.com>"]
 
+[[bin]]
+name = "sac"
+test = false
+doc = false
+
+[lib]
+name = "sac"
+path = "src/lib.rs"
+
 [dependencies]
+clap = "2.31"
+env_logger = "0.5.9"
 failure = "0.1"
-lazy_static = "1.0"
+lazy_static = "1"
+log = "0.4.0"
+#https://crates.io/crates/slog
 regex = "0.2"
 ring = "0.12"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
+# shell-escape = "~0.1.4"
+# termcolor = "~0.3.6"

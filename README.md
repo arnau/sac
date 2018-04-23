@@ -8,17 +8,36 @@ A set of tools to work with Registers.
 
 * * *
 
+## Install
+
+```sh
+cargo build --release
+cp target/release/sac $MYBINS/sac
+```
+
+## Usage
+
+See the [manual](MANUAL.md)
+
+
+### Items
+
+`sac item` offers a set of tools to work with items. For example, you can
+canonicalise items `sac item canon` or compute its hash `sac item hash`.
+
+* [x] `item canon` — Canonicalise item (json).
+* [ ] `item canon --from csv` — Canonicalise item (csv).
+* [x] `item hash` — Hash item (SHA-2 256).
+* [ ] `item hash -a blake2` — Hash item (non SHA-2 256).
 
 
 ## CLI Design
 
+Ideas to be implemented.
+
 ### Validate item
 
 What makes this command useful?
-
-* Describe all issues or just the first one. The first one is much simpler to
-  implement given how serde_json works.
-* …
 
 ```sh
 $ sac item validate '{"c": "z", "a": "x", "b": "y"}'
@@ -37,30 +56,6 @@ $ sac item validate '{"A":"x","b":"y"}'
 {"issues": ["invalid-fieldname"]}
 ```
 
-### Canonicalise item
-
-```sh
-$ sac item canon '{"c": "z", "a": "x", "b": "y"}'
-{"a":"x","b":"y","c":"z"}
-
-$ echo '{"a": "x", "b": "y", "c": "z"}' | sac item canon
-{"a":"x","b":"y","c":"z"}
-
-$ echo $?
-0
-
-$ sac item canon '{"A": "z", "a": "x", "b": "y"}'
-invalid field name "A"
-
-$ echo $?
-1
-
-$ sac item canon --force '{"A": "z", "a": "x", "b": "y"}'
-{"a":"x","b":"y"}
-
-$ echo $?
-0
-```
 
 Consider accepting CSV or TSV as inputs if annotated with headers.
 
@@ -83,34 +78,9 @@ $ sac item canon --format csv --input foo.csv
 {"a":"x2","b":"y2","c","z2"}
 ```
 
-### Hash item
-
-```sh
-$ sac item hash '{"a":"x","b":"y","c","z"}'
-ecd26bd54edf231ecbfbe361c97e0f720068f562e26c32696e777b6ed494cf73
-
-$ sac item hash '{"a":"x", "b":"y","c","z"}'
-invalid item. it should be canonical
-
-$ sac item hash --force '{"a":"x", "b":"y","c","z"}'
-ecd26bd54edf231ecbfbe361c97e0f720068f562e26c32696e777b6ed494cf73
-
-$ sac item hash --with-alg '{"a":"x","b":"y","c","z"}'
-sha-256:ecd26bd54edf231ecbfbe361c97e0f720068f562e26c32696e777b6ed494cf73
-```
 
 ### Mint item
 
-
-```
-$ sac item add --force '{"a":"x", "b":"y","c","z"}'
-add-item	{"a":"x","b":"y","c","z"}
-
-$ sac entry append --pk a 'add-item	{"a":"x", "b":"y","c","z"}'
-append-entry	a	2018-04-13T15:12:00Z	sha-256:ecd26bd54edf231ecbfbe361c97e0f720068f562e26c32696e777b6ed494cf73
-```
-
-Or
 
 ```
 $ sac mint --force --pk a '{"a":"x", "b":"y","c","z"}'
