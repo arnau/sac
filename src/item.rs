@@ -66,7 +66,7 @@ impl Item {
         self.0.insert(k, v);
     }
 
-    pub fn map(&self) -> Blob {
+    pub fn blob(&self) -> Blob {
         self.0.clone()
     }
 
