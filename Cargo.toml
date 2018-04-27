@@ -8,6 +8,11 @@ name = "sac"
 test = false
 doc = false
 
+[[bin]]
+name = "play"
+test = false
+doc = false
+
 [lib]
 name = "sac"
 path = "src/lib.rs"

@@ -1,3 +1,11 @@
+// Copyright 2018 Arnau Siches
+//
+// Licensed under the MIT license <LICENSE or http://opensource.org/licenses/MIT>,
+// at your option. This file may not be copied, modified, or distributed except
+// according to those terms.
+
+//! Sac library
+
 #[macro_use]
 extern crate log;
 
@@ -18,6 +26,7 @@ extern crate serde_json;
 
 pub mod digest;
 
-pub mod item;
+pub mod datatypes;
+pub mod blob;
 pub mod value;
 pub mod field;

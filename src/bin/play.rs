@@ -9,11 +9,13 @@ extern crate serde;
 extern crate serde_derive;
 extern crate serde_json;
 
-use sac::item;
+use sac::datatypes::{Integer, Value};
 
 fn main() {
-    let raw = r#"{"non-escapes":"❤bar\u2764", "escapes\u006F": "\u006F\t\u001F\n", "path": "//foo/bar/far"}"#;
-    let itemr = item::from_json(&raw);
-    let out = itemr.and_then(|item| item::to_json(&item));
-    println!("{}", &out.unwrap());
+    let u = Value::Untyped("foo".into());
+    println!("{:?}", u);
+
+    println!("{:?}", Value::String("bar".into()));
+    println!("{:?}", Value::Integer(Integer(1)));
+    println!("{:?}", Value::Point("a".into(), "b".into()));
 }

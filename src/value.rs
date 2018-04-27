@@ -1,3 +1,9 @@
+// Copyright 2018 Arnau Siches
+//
+// Licensed under the MIT license <LICENSE or http://opensource.org/licenses/MIT>,
+// at your option. This file may not be copied, modified, or distributed except
+// according to those terms.
+
 use serde::ser::{Serialize, Serializer};
 use std::str::FromStr;
 use serde::de::{self, Deserialize, Deserializer, Visitor};
