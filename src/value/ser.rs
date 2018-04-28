@@ -15,6 +15,24 @@ impl Serialize for Value {
     where
         S: Serializer,
     {
-        serializer.serialize_str(&self.0)
+        match *self {
+            Value::Untyped(ref v) => serializer.serialize_str(v),
+            _ => unimplemented!(),
+            // Value::Unknown => "".to_string(),
+            // Value::Inapplicable => "".to_string(),
+            // Value::Bool(v) => v.to_string(),
+            // Value::String(ref v) => v,
+            // Value::Text(ref v) => v,
+            // Value::List(ref v) => v.map(ToString).collect(),
+            // Value::Integer(ref v) => v.to_string(),
+            // Value::DateTime(ref v) => Debug::fmt(v, formatter),
+            // Value::Timestamp(ref v) => Debug::fmt(v, formatter),
+            // Value::Period(ref v) => Debug::fmt(v, formatter),
+            // Value::Point(ref v) => Debug::fmt(v, formatter),
+            // Value::Polygon(ref v) => Debug::fmt(v, formatter),
+            // Value::Curie(ref v) => Debug::fmt(v, formatter),
+            // Value::Hash(ref v) => Debug::fmt(v, formatter),
+            // Value::Url(ref v) => Debug::fmt(v, formatter),
+        }
     }
 }

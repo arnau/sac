@@ -44,7 +44,7 @@ mod tests {
     #[test]
     fn basic_string_value() {
         let input = r#""abc""#;
-        let expected = r#"Ok(Value("abc"))"#.to_string();
+        let expected = r#"Ok(Untyped("abc"))"#.to_string();
         let res = serde_json::from_str::<Value>(input);
 
         assert_eq!(format!("{:?}", res), expected);
@@ -53,7 +53,7 @@ mod tests {
     #[test]
     fn default_escapes_string_value() {
         let input = r#""\b\t\n\r\f\u0000\/""#;
-        let expected = r#"Ok(Value("\u{8}\t\n\r\u{c}\u{0}/"))"#.to_string();
+        let expected = r#"Ok(Untyped("\u{8}\t\n\r\u{c}\u{0}/"))"#.to_string();
         let res = serde_json::from_str::<Value>(input);
 
         assert_eq!(format!("{:?}", res), expected);
@@ -62,7 +62,7 @@ mod tests {
     #[test]
     fn unicode_escapes_string_value() {
         let input = r#""❤\u2764""#;
-        let expected = r#"Ok(Value("❤❤"))"#.to_string();
+        let expected = r#"Ok(Untyped("❤❤"))"#.to_string();
         let res = serde_json::from_str::<Value>(input);
 
         assert_eq!(format!("{:?}", res), expected);
