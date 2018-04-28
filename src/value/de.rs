@@ -4,52 +4,11 @@
 // at your option. This file may not be copied, modified, or distributed except
 // according to those terms.
 
-use serde::ser::{Serialize, Serializer};
 use std::str::FromStr;
 use serde::de::{self, Deserialize, Deserializer, Visitor};
 use std::fmt;
 
-/// Represents a validation error for item values. Ranges from parsing issues
-/// to type checks.
-#[derive(Debug, Fail)]
-pub enum ValueError {
-    #[fail(display = "invalid value {}", value)]
-    InvalidValue { value: String },
-    #[fail(display = "unknown type {}", kind)]
-    UnknownType { kind: String },
-}
-
-/// Represents a typed Item Value.
-///
-/// TODO: Add all defined datatypes. One branch should be an Untyped string so
-/// schemaless processes can be done without the overhead of a schema.
-#[derive(Debug, Clone)]
-pub struct Value(String);
-
-impl FromStr for Value {
-    type Err = ValueError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Value(s.to_owned()))
-    }
-}
-
-impl ToString for Value {
-    fn to_string(&self) -> String {
-        self.0.clone()
-    }
-}
-
-// TODO: Find a way to uppercase HEX here.
-// See https://docs.serde.rs/src/serde_json/ser.rs.html#1395-1415
-impl Serialize for Value {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        serializer.serialize_str(&self.0)
-    }
-}
+use super::Value;
 
 struct ValueVisitor;
 
