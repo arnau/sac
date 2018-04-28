@@ -90,6 +90,18 @@ impl Blob {
     }
 }
 
+// TODO: https://doc.rust-lang.org/std/hash/trait.Hash.html
+// pub trait Hash {
+//     fn hash<H>(&self, state: &mut H)
+//     where
+//         H: Hasher;
+
+//     fn hash_slice<H>(data: &[Self], state: &mut H)
+//     where
+//         H: Hasher,
+//     { ... }
+// }
+
 impl FromStr for Blob {
     type Err = Error;
     fn from_str(s: &str) -> Result<Blob, Self::Err> {

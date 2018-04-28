@@ -6,3 +6,9 @@
 
 #[derive(Clone, PartialEq, Debug)]
 pub struct Url(String);
+
+impl ToString for Url {
+    fn to_string(&self) -> String {
+        self.0.clone()
+    }
+}

@@ -14,3 +14,9 @@ impl Debug for Text {
         formatter.debug_tuple("Text").field(&self.0).finish()
     }
 }
+
+impl ToString for Text {
+    fn to_string(&self) -> String {
+        self.0.clone()
+    }
+}

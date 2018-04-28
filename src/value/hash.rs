@@ -6,3 +6,9 @@
 
 #[derive(Clone, PartialEq, Debug)]
 pub struct Hash(String);
+
+impl ToString for Hash {
+    fn to_string(&self) -> String {
+        self.0.clone()
+    }
+}

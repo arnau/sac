@@ -26,7 +26,6 @@ extern crate serde_json;
 
 pub mod digest;
 
-pub mod datatypes;
 pub mod blob;
 pub mod value;
 pub mod field;

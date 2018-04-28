@@ -62,6 +62,7 @@ pub enum Value {
     ///
     /// * In JSON this is encoded as `null`.
     /// * In CSV this is encoded as an empty value.
+    /// TODO: What if instead of encoding it, we ignore it entirely at deserialize time?
     Unknown,
 
     /// Represents an inapplicable value. Note this value is not part of the
