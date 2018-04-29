@@ -106,6 +106,8 @@ impl Prefix {
 }
 
 /// A CURIE reference is a string conforming to irelative-ref in [RFC3987]
+///
+/// TODO: Consider skipping RFC3987 and conform to https://url.spec.whatwg.org/
 #[derive(Clone, PartialEq)]
 pub struct Reference(String);
 

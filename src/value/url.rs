@@ -4,11 +4,40 @@
 // at your option. This file may not be copied, modified, or distributed except
 // according to those terms.
 
-#[derive(Clone, PartialEq, Debug)]
-pub struct Url(String);
+use std::fmt::{self, Debug, Display};
+use failure;
+use url;
 
-impl ToString for Url {
-    fn to_string(&self) -> String {
-        self.0.clone()
+/// A Url resource
+///
+/// ```
+/// let raw = "https://example.org/foo:bar";
+/// let u = sac::value::url::Url::parse(raw).unwrap();
+/// assert_eq!(u.to_string(), raw.to_string());
+/// ```
+#[derive(Clone, PartialEq)]
+pub struct Url(url::Url);
+
+impl Debug for Url {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        Debug::fmt(&self.0, formatter)
+    }
+}
+
+impl Display for Url {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        Display::fmt(&self.0, formatter)
+    }
+}
+
+impl Url {
+    pub fn parse(s: &str) -> Result<Self, failure::Error> {
+        let u = url::Url::parse(s)?;
+
+        Ok(Url(u))
+    }
+
+    pub fn is_valid(&self) -> bool {
+        true
     }
 }
