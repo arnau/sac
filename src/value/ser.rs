@@ -29,6 +29,7 @@ impl Serialize for Value {
                 map.end()
             }
             Value::Bool(v) => serializer.serialize_bool(v),
+            Value::Curie(ref v) => serializer.serialize_str(&v.to_string()),
             Value::Hash(ref v) => serializer.serialize_str(&v.to_string()),
             Value::Integer(ref v) => serializer.serialize_i64(v.0),
             Value::String(ref v) => serializer.serialize_str(v),
@@ -48,7 +49,6 @@ impl Serialize for Value {
             // Value::Period(ref v) => Debug::fmt(v, formatter),
             // Value::Point(ref v) => Debug::fmt(v, formatter),
             // Value::Polygon(ref v) => Debug::fmt(v, formatter),
-            // Value::Curie(ref v) => Debug::fmt(v, formatter),
         }
     }
 }
@@ -142,4 +142,15 @@ mod tests {
 
         assert_eq!(format!("{:?}", res), expected);
     }
+
+    #[test]
+    fn serialize_curie() {
+        use value::curie::{Curie, Prefix, Reference};
+        let input = Value::Curie(Curie::new(Prefix::new("foo"), Reference::new("bar")));
+        let expected = r#"Ok("\"foo:bar\"")"#.to_string();
+        let res = serde_json::to_string(&input);
+
+        assert_eq!(format!("{:?}", res), expected);
+    }
+
 }
