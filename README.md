@@ -25,10 +25,31 @@ See the [manual](MANUAL.md)
 `sac item` offers a set of tools to work with items. For example, you can
 canonicalise items `sac item canon` or compute its hash `sac item hash`.
 
-* [x] `item canon` — Canonicalise item (json).
-* [ ] `item canon --from csv` — Canonicalise item (csv).
-* [x] `item hash` — Hash item (SHA-2 256).
-* [ ] `item hash -a blake2` — Hash item (non SHA-2 256).
+* [x] `sac item canon` — Canonicalise item (json).
+* [ ] `sac item canon --from csv` — Canonicalise item (csv).
+* [x] `sac item hash` — Hash item (SHA-2 256).
+* [ ] `sac item hash -a blake2` — Hash item (non SHA-2 256).
+* [ ] `sac blob [command]` — Alias `item` and `blob` to surface the proposed naming.
+
+### Values
+
+`sac value` offers a set of tools to work with values. For example, you can
+check if a value conforms with a given datatype.
+
+* [ ] `sac value check --type bool`
+* [ ] `sac value check --type curie` — Check a Curie.
+* [ ] `sac value check --type datetime`
+* [ ] `sac value check --type hash`
+* [ ] `sac value check --type inapplicable`
+* [ ] `sac value check --type integer`
+* [ ] `sac value check --type list`
+* [ ] `sac value check --type period`
+* [ ] `sac value check --type point`
+* [ ] `sac value check --type polygon`
+* [ ] `sac value check --type string`
+* [ ] `sac value check --type text`
+* [ ] `sac value check --type timestamp`
+* [ ] `sac value check --type url` — Check a Url.
 
 
 ## CLI Design

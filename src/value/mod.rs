@@ -96,7 +96,7 @@ pub enum Value {
     // TODO: spec doesn't allow floating point numbers.
     Integer(Integer),
     // TODO: ISO8601 datetime UTC only.
-    DateTime(Datetime),
+    Datetime(Datetime),
     // TODO: ISO8601 timestamp UTC only. Requires all atoms in date and time.
     // It could (should?) be represented as epoch.
     Timestamp(Timestamp),
@@ -123,7 +123,7 @@ impl Debug for Value {
             Value::String(ref v) => formatter.debug_tuple("String").field(v).finish(),
             Value::Text(ref v) => Debug::fmt(v, formatter),
             Value::Integer(ref v) => Debug::fmt(v, formatter),
-            Value::DateTime(ref v) => Debug::fmt(v, formatter),
+            Value::Datetime(ref v) => Debug::fmt(v, formatter),
             Value::Timestamp(ref v) => Debug::fmt(v, formatter),
             Value::Period(ref v) => Debug::fmt(v, formatter),
             Value::Point(ref v) => Debug::fmt(v, formatter),
@@ -155,7 +155,7 @@ impl ToString for Value {
             // Value::Text(ref v) => v,
             // Value::List(ref v) => v.map(ToString).collect(),
             // Value::Integer(ref v) => v.to_string(),
-            // Value::DateTime(ref v) => Debug::fmt(v, formatter),
+            // Value::Datetime(ref v) => Debug::fmt(v, formatter),
             // Value::Timestamp(ref v) => Debug::fmt(v, formatter),
             // Value::Period(ref v) => Debug::fmt(v, formatter),
             // Value::Point(ref v) => Debug::fmt(v, formatter),
