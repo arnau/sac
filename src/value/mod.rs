@@ -4,7 +4,7 @@
 // at your option. This file may not be copied, modified, or distributed except
 // according to those terms.
 
-use std::fmt::{self, Debug};
+use std::fmt::{self, Debug, Display};
 use std::str::FromStr;
 
 pub mod curie;
@@ -143,13 +143,13 @@ impl FromStr for Value {
     }
 }
 
-impl ToString for Value {
-    fn to_string(&self) -> String {
+impl Display for Value {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Value::Untyped(ref v) => v.to_owned(),
-            _ => "unimplemented".to_owned(),
+            Value::Untyped(ref v) => Display::fmt(v, formatter),
+            Value::Inapplicable => Display::fmt("N/A", formatter),
+            _ => unimplemented!(),
             // Value::Unknown => "".to_string(),
-            // Value::Inapplicable => "".to_string(),
             // Value::Bool(v) => v.to_string(),
             // Value::String(ref v) => v,
             // Value::Text(ref v) => v,
