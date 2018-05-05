@@ -53,7 +53,9 @@ pub enum ValueError {
 // Checking for correctness requires parsing the value in most situations so
 // check should be implemented as function of parse
 pub trait Parse {
-    fn parse(s: &str) -> Result<Value, ValueError>;
+    type Atom;
+    type Error;
+    fn parse(s: &str) -> Result<Self::Atom, Self::Error>;
 }
 
 /// Represents a Blob Value.
