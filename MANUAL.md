@@ -22,7 +22,7 @@ Failure codes are being designed so in the meantime all of them are `1`.
 
 ## Values
 
-* `value check` - Checks a value againt a type.
+* `value check --type <type>` - Checks a value againt a type.
 
 # Examples
 

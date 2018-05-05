@@ -5,7 +5,7 @@
 // according to those terms.
 
 use std::fmt::{self, Debug, Display};
-use std::str::FromStr;
+use std::str::{FromStr, ParseBoolError};
 
 pub mod curie;
 pub mod datetime;
@@ -37,12 +37,14 @@ use kind::Kind;
 /// to type checks.
 #[derive(Debug, Fail)]
 pub enum ValueError {
-    #[fail(display = "invalid value {}", value)]
+    #[fail(display = "Invalid value {}", value)]
     InvalidValue { value: String },
-    #[fail(display = "unknown type {}", kind)]
+    #[fail(display = "Unknown type {}", kind)]
     UnknownType { kind: String },
-    #[fail(display = "url error")]
-    UrlError(UrlError),
+    #[fail(display = "Invalid url")]
+    InvalidUrl(UrlError),
+    #[fail(display = "Invalid boolean")]
+    InvalidBool(ParseBoolError),
 }
 
 /// An interface to guarantee values can be checked for correctness.
@@ -186,6 +188,10 @@ impl Default for Value {
 impl Value {
     pub fn parse(s: &str, kind: Kind) -> Result<Self, ValueError> {
         match kind {
+            Kind::Bool => {
+                let b = s.parse::<bool>()?;
+                Ok(Value::Bool(b))
+            }
             Kind::Url => {
                 let url = Url::parse(s)?;
                 Ok(Value::Url(url))
@@ -212,7 +218,13 @@ impl Value {
 
 impl From<UrlError> for ValueError {
     fn from(err: UrlError) -> ValueError {
-        ValueError::UrlError(err)
+        ValueError::InvalidUrl(err)
+    }
+}
+
+impl From<ParseBoolError> for ValueError {
+    fn from(err: ParseBoolError) -> ValueError {
+        ValueError::InvalidBool(err)
     }
 }
 

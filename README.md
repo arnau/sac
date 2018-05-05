@@ -36,7 +36,7 @@ blob hash`.
 `sac value` offers a set of tools to work with values. For example, you can
 check if a value conforms with a given datatype.
 
-* [ ] `sac value check --type bool`
+* [x] `sac value check --type bool` — Check a boolean (true | false).
 * [ ] `sac value check --type curie` — Check a Curie.
 * [ ] `sac value check --type datetime`
 * [ ] `sac value check --type hash`
