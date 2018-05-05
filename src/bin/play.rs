@@ -9,7 +9,8 @@ extern crate serde;
 extern crate serde_derive;
 extern crate serde_json;
 
-use sac::datatypes::{Integer, Value};
+use sac::value::Value;
+use sac::value::integer::Integer;
 
 fn main() {
     let u = Value::Untyped("foo".into());
@@ -17,5 +18,4 @@ fn main() {
 
     println!("{:?}", Value::String("bar".into()));
     println!("{:?}", Value::Integer(Integer(1)));
-    println!("{:?}", Value::Point("a".into(), "b".into()));
 }
