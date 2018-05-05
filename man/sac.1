@@ -16,29 +16,41 @@ You should always expect an exit code of \f[C]0\f[] when the command
 succeeds.
 Failure codes are being designed so in the meantime all of them are
 \f[C]1\f[].
-.SS Items
+.SS Blobs
 .IP \[bu] 2
-\f[C]item\ canon\f[] \- Takes an item and transforms it into its
+\f[C]blob\ canon\f[] \- Takes a blob and transforms it into its
 canonical form.
 .IP \[bu] 2
-\f[C]item\ hash\f[] \- Takes an item and generates its hash.
+\f[C]blob\ hash\f[] \- Takes an blob and generates its hash.
+.SS Values
+.IP \[bu] 2
+\f[C]value\ check\f[] \- Checks a value againt a type.
 .SH EXAMPLES
 .PP
-Canonicalise an item:
+Canonicalise a blob:
 .IP
 .nf
 \f[C]
-$\ sac\ item\ canon\ \[aq]{"foo":\ "abc",\ "bar":\ "xyz"}\[aq]
+$\ sac\ blob\ canon\ \[aq]{"foo":\ "abc",\ "bar":\ "xyz"}\[aq]
 {"bar":"xyz","foo":"abc"}
 \f[]
 .fi
 .PP
-Hash an item:
+Hash a blob:
 .IP
 .nf
 \f[C]
-$\ sac\ item\ hash\ \[aq]{"bar":"xyz","foo":"abc"}\[aq]
+$\ sac\ blob\ hash\ \[aq]{"bar":"xyz","foo":"abc"}\[aq]
 5dd4fe3b0de91882dae86b223ca531b5c8f2335d9ee3fd0ab18dfdc2871d0c61
+\f[]
+.fi
+.PP
+Check a URL:
+.IP
+.nf
+\f[C]
+$\ sac\ value\ check\ \-\-type\ url\ https://example.org/
+The\ value\ https://example.org/\ is\ a\ valid\ Url
 \f[]
 .fi
 .SH AUTHOR

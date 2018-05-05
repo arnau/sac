@@ -20,16 +20,16 @@ cp target/release/sac $MYBINS/sac
 See the [manual](MANUAL.md)
 
 
-### Items
+### Blobs
 
-`sac item` offers a set of tools to work with items. For example, you can
-canonicalise items `sac item canon` or compute its hash `sac item hash`.
+`sac blob` offers a set of tools to work with blobs (also known as items). For
+example, you can canonicalise a blob `sac blob canon` or compute its hash `sac
+blob hash`.
 
-* [x] `sac item canon` — Canonicalise item (json).
-* [ ] `sac item canon --from csv` — Canonicalise item (csv).
-* [x] `sac item hash` — Hash item (SHA-2 256).
-* [ ] `sac item hash -a blake2` — Hash item (non SHA-2 256).
-* [ ] `sac blob [command]` — Alias `item` and `blob` to surface the proposed naming.
+* [x] `sac blob canon` — Canonicalise item (json).
+* [ ] `sac blob canon --from csv` — Canonicalise item (csv).
+* [x] `sac blob hash` — Hash item (SHA-2 256).
+* [ ] `sac blob hash -a blake2` — Hash item (non SHA-2 256).
 
 ### Values
 
@@ -49,7 +49,7 @@ check if a value conforms with a given datatype.
 * [ ] `sac value check --type string`
 * [ ] `sac value check --type text`
 * [ ] `sac value check --type timestamp`
-* [ ] `sac value check --type url` — Check a Url.
+* [x] `sac value check --type url` — Check a Url.
 
 
 ## CLI Design

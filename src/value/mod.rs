@@ -46,12 +46,6 @@ pub enum ValueError {
 }
 
 /// An interface to guarantee values can be checked for correctness.
-///
-// TODO:
-// 1. sac value check --type curie "foo"
-// 2. cmd::value::check(Type::Curie, "foo")
-// 3. Value::parse(Type::Curie, "foo").is_ok()
-// 4. Value::Curie::parse("foo")
 pub trait Parse {
     type Atom;
     type Error;
