@@ -219,7 +219,7 @@ impl Value {
                     Err(ValueError::InvalidUnknown)
                 }
             }
-            // Kind::Untyped,
+            Kind::Untyped => Ok(Value::Untyped(s.to_owned())),
             Kind::Url => {
                 let url = Url::parse(s)?;
                 Ok(Value::Url(url))
