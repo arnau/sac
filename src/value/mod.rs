@@ -30,7 +30,8 @@ use self::point::Point;
 use self::polygon::Polygon;
 use self::text::Text;
 use self::timestamp::Timestamp;
-use self::url::Url;
+use self::url::{Url, UrlError};
+use kind::Kind;
 
 /// Represents a validation error for item values. Ranges from parsing issues
 /// to type checks.
@@ -40,6 +41,8 @@ pub enum ValueError {
     InvalidValue { value: String },
     #[fail(display = "unknown type {}", kind)]
     UnknownType { kind: String },
+    #[fail(display = "url error")]
+    UrlError(UrlError),
 }
 
 /// An interface to guarantee values can be checked for correctness.
@@ -48,10 +51,7 @@ pub enum ValueError {
 // 1. sac value check --type curie "foo"
 // 2. cmd::value::check(Type::Curie, "foo")
 // 3. Value::parse(Type::Curie, "foo").is_ok()
-// 3.1. Value::Curie::parse("foo")
-//
-// Checking for correctness requires parsing the value in most situations so
-// check should be implemented as function of parse
+// 4. Value::Curie::parse("foo")
 pub trait Parse {
     type Atom;
     type Error;
@@ -131,22 +131,22 @@ pub enum Value {
 impl Debug for Value {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Value::Untyped(ref v) => formatter.debug_tuple("Untyped").field(v).finish(),
-            Value::List(ref v) => formatter.debug_tuple("List").field(v).finish(),
-            Value::Unknown => formatter.debug_tuple("Unknown").finish(),
-            Value::Inapplicable => formatter.debug_tuple("Inapplicable").finish(),
             Value::Bool(v) => formatter.debug_tuple("Bool").field(&v).finish(),
-            Value::String(ref v) => formatter.debug_tuple("String").field(v).finish(),
-            Value::Text(ref v) => Debug::fmt(v, formatter),
-            Value::Integer(ref v) => Debug::fmt(v, formatter),
+            Value::Curie(ref v) => Debug::fmt(v, formatter),
             Value::Datetime(ref v) => Debug::fmt(v, formatter),
-            Value::Timestamp(ref v) => Debug::fmt(v, formatter),
+            Value::Hash(ref v) => Debug::fmt(v, formatter),
+            Value::Inapplicable => formatter.debug_tuple("Inapplicable").finish(),
+            Value::Integer(ref v) => Debug::fmt(v, formatter),
+            Value::List(ref v) => formatter.debug_tuple("List").field(v).finish(),
             Value::Period(ref v) => Debug::fmt(v, formatter),
             Value::Point(ref v) => Debug::fmt(v, formatter),
             Value::Polygon(ref v) => Debug::fmt(v, formatter),
-            Value::Curie(ref v) => Debug::fmt(v, formatter),
-            Value::Hash(ref v) => Debug::fmt(v, formatter),
-            Value::Url(ref v) => Debug::fmt(v, formatter),
+            Value::String(ref v) => formatter.debug_tuple("String").field(v).finish(),
+            Value::Text(ref v) => Debug::fmt(v, formatter),
+            Value::Timestamp(ref v) => Debug::fmt(v, formatter),
+            Value::Unknown => formatter.debug_tuple("Unknown").finish(),
+            Value::Untyped(ref v) => formatter.debug_tuple("Untyped").field(v).finish(),
+            Value::Url(ref v) => formatter.debug_tuple("Url").field(v).finish(),
         }
     }
 }
@@ -162,8 +162,9 @@ impl FromStr for Value {
 impl Display for Value {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Value::Untyped(ref v) => Display::fmt(v, formatter),
             Value::Inapplicable => Display::fmt("N/A", formatter),
+            Value::Untyped(ref v) => Display::fmt(v, formatter),
+            Value::Url(ref v) => Display::fmt(v, formatter),
             _ => unimplemented!(),
             // Value::Unknown => "".to_string(),
             // Value::Bool(v) => v.to_string(),
@@ -178,7 +179,6 @@ impl Display for Value {
             // Value::Polygon(ref v) => Debug::fmt(v, formatter),
             // Value::Curie(ref v) => Debug::fmt(v, formatter),
             // Value::Hash(ref v) => Debug::fmt(v, formatter),
-            // Value::Url(ref v) => Debug::fmt(v, formatter),
         }
     }
 }
@@ -187,4 +187,52 @@ impl Default for Value {
     fn default() -> Value {
         Value::Unknown
     }
+}
+
+impl Value {
+    pub fn parse(s: &str, kind: Kind) -> Result<Self, ValueError> {
+        match kind {
+            Kind::Url => {
+                let url = Url::parse(s)?;
+                Ok(Value::Url(url))
+            }
+            // Bool,
+            // Curie,
+            // Datetime,
+            // Hash,
+            // Inapplicable,
+            // Integer,
+            // List(Box<Kind>),
+            // Period,
+            // Point,
+            // Polygon,
+            // String,
+            // Text,
+            // Timestamp,
+            // Unknown,
+            // Untyped,
+            _ => Ok(Value::Untyped(s.to_owned())),
+        }
+    }
+}
+
+impl From<UrlError> for ValueError {
+    fn from(err: UrlError) -> ValueError {
+        ValueError::UrlError(err)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use super::super::kind::Kind;
+
+    #[test]
+    fn parse_url() {
+        let expected = r#"Ok(Url("https://example.org/"))"#.to_string();
+        let actual = Value::parse("https://example.org", Kind::Url);
+
+        assert_eq!(format!("{:?}", actual), expected);
+    }
+
 }

@@ -18,6 +18,8 @@ use std::process;
 
 use clap::{App, Arg, SubCommand};
 
+use sac::kind::Kind;
+
 fn main() {
     let matches = App::new(crate_name!())
         .version(crate_version!())
@@ -53,6 +55,45 @@ fn main() {
                         ),
                 ),
         )
+        .subcommand(
+            SubCommand::with_name("value")
+                .about("Operate on values")
+                .subcommand(
+                    SubCommand::with_name("check")
+                        .about("Check if a value is valid")
+                        .arg(
+                            Arg::with_name("input")
+                                .help("The value to be checked")
+                                .required(true)
+                                .index(1),
+                        )
+                        .arg(
+                            Arg::with_name("type")
+                                .help("The type the value is expected to be")
+                                .long("type")
+                                .short("t")
+                                .takes_value(true)
+                                .required(true)
+                                .possible_values(&[
+                                    "bool",
+                                    "curie",
+                                    "datetime",
+                                    "hash",
+                                    "inapplicable",
+                                    "integer",
+                                    "period",
+                                    "point",
+                                    "polygon",
+                                    "string",
+                                    "text",
+                                    "timestamp",
+                                    "unknown",
+                                    "untyped",
+                                    "url",
+                                ]),
+                        ),
+                ),
+        )
         .get_matches();
 
     match matches.subcommand() {
@@ -82,6 +123,22 @@ fn main() {
             }
 
             _ => unimplemented!(),
+        },
+        ("value", Some(value_matches)) => match value_matches.subcommand() {
+            ("check", Some(sub_matches)) => {
+                let raw = sub_matches.value_of("input").unwrap();
+                let kind = value_t!(sub_matches, "type", Kind).unwrap();
+
+                match commands::value::check(raw, kind.clone()) {
+                    Ok(v) => println!("The value {} is a valid {}", v, kind),
+                    Err(err) => {
+                        // TODO: Improve error message
+                        eprintln!("Invalid value: {}", err);
+                        process::exit(1)
+                    }
+                }
+            }
+            _ => process::exit(127),
         },
         ("", None) => {
             println!("No subcommand was used");
