@@ -48,6 +48,8 @@ pub enum ValueError {
     InvalidBool(ParseBoolError),
     #[fail(display = "Invalid integer")]
     InvalidInteger(ParseIntError),
+    #[fail(display = "Invalid unknown")]
+    InvalidUnknown,
 }
 
 /// An interface to guarantee values can be checked for correctness.
@@ -161,16 +163,16 @@ impl FromStr for Value {
 impl Display for Value {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match *self {
+            Value::Bool(ref v) => Display::fmt(v, formatter),
             Value::Inapplicable => Display::fmt("N/A", formatter),
+            Value::Integer(ref v) => Display::fmt(v, formatter),
+            Value::String(ref v) => Display::fmt(v, formatter),
+            Value::Unknown => Display::fmt("null", formatter),
             Value::Untyped(ref v) => Display::fmt(v, formatter),
             Value::Url(ref v) => Display::fmt(v, formatter),
             _ => unimplemented!(),
-            // Value::Unknown => "".to_string(),
-            // Value::Bool(v) => v.to_string(),
-            // Value::String(ref v) => v,
             // Value::Text(ref v) => v,
             // Value::List(ref v) => v.map(ToString).collect(),
-            // Value::Integer(ref v) => v.to_string(),
             // Value::Datetime(ref v) => Debug::fmt(v, formatter),
             // Value::Timestamp(ref v) => Debug::fmt(v, formatter),
             // Value::Period(ref v) => Debug::fmt(v, formatter),
@@ -207,10 +209,16 @@ impl Value {
             // Kind::Period,
             // Kind::Point,
             // Kind::Polygon,
-            // Kind::String,
+            Kind::String => Ok(Value::String(s.to_owned())),
             // Kind::Text,
             // Kind::Timestamp,
-            // Kind::Unknown,
+            Kind::Unknown => {
+                if s == "null" {
+                    Ok(Value::Unknown)
+                } else {
+                    Err(ValueError::InvalidUnknown)
+                }
+            }
             // Kind::Untyped,
             Kind::Url => {
                 let url = Url::parse(s)?;

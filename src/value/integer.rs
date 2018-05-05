@@ -4,7 +4,7 @@
 // at your option. This file may not be copied, modified, or distributed except
 // according to those terms.
 
-use std::fmt::{self, Debug};
+use std::fmt::{self, Debug, Display};
 
 /// An decimal integer.
 /// TODO: spec doesn't allow floating point numbers.
@@ -14,5 +14,11 @@ pub struct Integer(pub i64);
 impl Debug for Integer {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         formatter.debug_tuple("Integer").field(&self.0).finish()
+    }
+}
+
+impl Display for Integer {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        Display::fmt(&self.0, formatter)
     }
 }
