@@ -28,5 +28,6 @@ extern crate url;
 pub mod digest;
 
 pub mod blob;
+pub mod kind;
 pub mod value;
 pub mod field;

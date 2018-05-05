@@ -42,6 +42,20 @@ pub enum ValueError {
     UnknownType { kind: String },
 }
 
+/// An interface to guarantee values can be checked for correctness.
+///
+// TODO:
+// 1. sac value check --type curie "foo"
+// 2. cmd::value::check(Type::Curie, "foo")
+// 3. Value::parse(Type::Curie, "foo").is_ok()
+// 3.1. Value::Curie::parse("foo")
+//
+// Checking for correctness requires parsing the value in most situations so
+// check should be implemented as function of parse
+pub trait Parse {
+    fn parse(s: &str) -> Result<Value, ValueError>;
+}
+
 /// Represents a Blob Value.
 ///
 /// The spec defines the following:

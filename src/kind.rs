@@ -1,0 +1,18 @@
+pub enum Kind {
+    Bool,
+    Curie,
+    Datetime,
+    Hash,
+    Inapplicable,
+    Integer,
+    List(Box<Kind>),
+    Period,
+    Point,
+    Polygon,
+    String,
+    Text,
+    Timestamp,
+    Unknown,
+    Untyped,
+    Url,
+}
