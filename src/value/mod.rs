@@ -6,6 +6,7 @@
 
 use std::fmt::{self, Debug, Display};
 use std::str::{FromStr, ParseBoolError};
+use std::num::ParseIntError;
 
 pub mod curie;
 pub mod datetime;
@@ -45,6 +46,8 @@ pub enum ValueError {
     InvalidUrl(UrlError),
     #[fail(display = "Invalid boolean")]
     InvalidBool(ParseBoolError),
+    #[fail(display = "Invalid integer")]
+    InvalidInteger(ParseIntError),
 }
 
 /// An interface to guarantee values can be checked for correctness.
@@ -192,25 +195,27 @@ impl Value {
                 let b = s.parse::<bool>()?;
                 Ok(Value::Bool(b))
             }
+            // Kind::Curie,
+            // Kind::Datetime,
+            // Kind::Hash,
+            // Kind::Inapplicable,
+            Kind::Integer => {
+                let i = s.parse::<i64>()?;
+                Ok(Value::Integer(Integer(i)))
+            }
+            // Kind::List(Box<Kind>),
+            // Kind::Period,
+            // Kind::Point,
+            // Kind::Polygon,
+            // Kind::String,
+            // Kind::Text,
+            // Kind::Timestamp,
+            // Kind::Unknown,
+            // Kind::Untyped,
             Kind::Url => {
                 let url = Url::parse(s)?;
                 Ok(Value::Url(url))
             }
-            // Bool,
-            // Curie,
-            // Datetime,
-            // Hash,
-            // Inapplicable,
-            // Integer,
-            // List(Box<Kind>),
-            // Period,
-            // Point,
-            // Polygon,
-            // String,
-            // Text,
-            // Timestamp,
-            // Unknown,
-            // Untyped,
             _ => Ok(Value::Untyped(s.to_owned())),
         }
     }
@@ -228,10 +233,32 @@ impl From<ParseBoolError> for ValueError {
     }
 }
 
+impl From<ParseIntError> for ValueError {
+    fn from(err: ParseIntError) -> ValueError {
+        ValueError::InvalidInteger(err)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use super::super::kind::Kind;
+
+    #[test]
+    fn parse_bool() {
+        let expected = r#"Ok(Bool(true))"#.to_string();
+        let actual = Value::parse("true", Kind::Bool);
+
+        assert_eq!(format!("{:?}", actual), expected);
+    }
+
+    #[test]
+    fn parse_integer() {
+        let expected = r#"Ok(Integer(0))"#.to_string();
+        let actual = Value::parse("0", Kind::Integer);
+
+        assert_eq!(format!("{:?}", actual), expected);
+    }
 
     #[test]
     fn parse_url() {
@@ -240,5 +267,4 @@ mod tests {
 
         assert_eq!(format!("{:?}", actual), expected);
     }
-
 }
