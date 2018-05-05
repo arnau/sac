@@ -50,6 +50,8 @@ pub enum ValueError {
     InvalidInteger(ParseIntError),
     #[fail(display = "Invalid unknown")]
     InvalidUnknown,
+    #[fail(display = "Invalid inapplicable")]
+    InvalidInapplicable,
 }
 
 /// An interface to guarantee values can be checked for correctness.
@@ -200,7 +202,14 @@ impl Value {
             // Kind::Curie,
             // Kind::Datetime,
             // Kind::Hash,
-            // Kind::Inapplicable,
+            Kind::Inapplicable => {
+                let s = s.to_lowercase();
+                if s == "na" || s == "n/a" {
+                    Ok(Value::Inapplicable)
+                } else {
+                    Err(ValueError::InvalidInapplicable)
+                }
+            }
             Kind::Integer => {
                 let i = s.parse::<i64>()?;
                 Ok(Value::Integer(Integer(i)))
@@ -213,6 +222,7 @@ impl Value {
             // Kind::Text,
             // Kind::Timestamp,
             Kind::Unknown => {
+                let s = s.to_lowercase();
                 if s == "null" {
                     Ok(Value::Unknown)
                 } else {
