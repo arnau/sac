@@ -4,7 +4,20 @@
 // at your option. This file may not be copied, modified, or distributed except
 // according to those terms.
 
-use std::fmt::{self, Debug};
+use std::fmt::{self, Debug, Display};
+use pulldown_cmark::{Event, Parser};
+
+use super::Parse;
+
+#[derive(Debug, Fail)]
+pub enum TextError {
+    #[fail(display = "HTML is not allowed in Text. Found {}", value)]
+    DisallowedHtml { value: String },
+    #[fail(display = "Inline HTML is not allowed in Text. Found {}", value)]
+    DisallowedInlineHtml { value: String },
+    #[fail(display = "Validation errors")]
+    List(Vec<TextError>),
+}
 
 #[derive(Clone, PartialEq)]
 pub struct Text(String);
@@ -15,8 +28,34 @@ impl Debug for Text {
     }
 }
 
-impl ToString for Text {
-    fn to_string(&self) -> String {
-        self.0.clone()
+impl Display for Text {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        Display::fmt(&self.0, formatter)
+    }
+}
+
+impl Parse for Text {
+    type Atom = Text;
+    type Error = TextError;
+
+    fn parse(s: &str) -> Result<Self::Atom, Self::Error> {
+        let errors: Vec<TextError> = Parser::new(s)
+            .filter_map(|ev| match ev {
+                // Escape inline html
+                Event::Html(html) => Some(TextError::DisallowedHtml {
+                    value: format!("{}", html),
+                }),
+                Event::InlineHtml(html) => Some(TextError::DisallowedInlineHtml {
+                    value: format!("{}", html),
+                }),
+                _ => None,
+            })
+            .collect();
+
+        if errors.is_empty() {
+            Ok(Text(s.to_owned()))
+        } else {
+            Err(TextError::List(errors))
+        }
     }
 }

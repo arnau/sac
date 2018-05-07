@@ -29,7 +29,7 @@ use self::integer::Integer;
 use self::period::Period;
 use self::point::Point;
 use self::polygon::Polygon;
-use self::text::Text;
+use self::text::{Text, TextError};
 use self::timestamp::Timestamp;
 use self::url::{Url, UrlError};
 use kind::Kind;
@@ -52,6 +52,8 @@ pub enum ValueError {
     InvalidUnknown,
     #[fail(display = "Invalid inapplicable")]
     InvalidInapplicable,
+    #[fail(display = "Invalid text")]
+    InvalidText(TextError),
 }
 
 /// An interface to guarantee values can be checked for correctness.
@@ -169,11 +171,11 @@ impl Display for Value {
             Value::Inapplicable => Display::fmt("N/A", formatter),
             Value::Integer(ref v) => Display::fmt(v, formatter),
             Value::String(ref v) => Display::fmt(v, formatter),
+            Value::Text(ref v) => Display::fmt(v, formatter),
             Value::Unknown => Display::fmt("null", formatter),
             Value::Untyped(ref v) => Display::fmt(v, formatter),
             Value::Url(ref v) => Display::fmt(v, formatter),
             _ => unimplemented!(),
-            // Value::Text(ref v) => v,
             // Value::List(ref v) => v.map(ToString).collect(),
             // Value::Datetime(ref v) => Debug::fmt(v, formatter),
             // Value::Timestamp(ref v) => Debug::fmt(v, formatter),
@@ -219,7 +221,10 @@ impl Value {
             // Kind::Point,
             // Kind::Polygon,
             Kind::String => Ok(Value::String(s.to_owned())),
-            // Kind::Text,
+            Kind::Text => {
+                let text = Text::parse(s)?;
+                Ok(Value::Text(text))
+            }
             // Kind::Timestamp,
             Kind::Unknown => {
                 let s = s.to_lowercase();
@@ -257,6 +262,12 @@ impl From<ParseIntError> for ValueError {
     }
 }
 
+impl From<TextError> for ValueError {
+    fn from(err: TextError) -> ValueError {
+        ValueError::InvalidText(err)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -282,6 +293,14 @@ mod tests {
     fn parse_url() {
         let expected = r#"Ok(Url("https://example.org/"))"#.to_string();
         let actual = Value::parse("https://example.org", Kind::Url);
+
+        assert_eq!(format!("{:?}", actual), expected);
+    }
+
+    #[test]
+    fn parse_text() {
+        let expected = r#"Ok(Text("foo *bar*"))"#.to_string();
+        let actual = Value::parse("foo *bar*", Kind::Text);
 
         assert_eq!(format!("{:?}", actual), expected);
     }
