@@ -24,7 +24,7 @@ pub mod de;
 
 use self::curie::Curie;
 use self::datetime::Datetime;
-use self::hash::Hash;
+use self::hash::{Hash, HashError};
 use self::integer::Integer;
 use self::period::Period;
 use self::point::Point;
@@ -54,9 +54,13 @@ pub enum ValueError {
     InvalidInapplicable,
     #[fail(display = "Invalid text")]
     InvalidText(TextError),
+    #[fail(display = "Invalid hash")]
+    InvalidHash(HashError),
 }
 
 /// An interface to guarantee values can be checked for correctness.
+///
+/// TODO: Consider using FromStr instead.
 pub trait Parse {
     type Atom;
     type Error;
@@ -168,6 +172,7 @@ impl Display for Value {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Value::Bool(ref v) => Display::fmt(v, formatter),
+            Value::Hash(ref v) => Debug::fmt(v, formatter),
             Value::Inapplicable => Display::fmt("N/A", formatter),
             Value::Integer(ref v) => Display::fmt(v, formatter),
             Value::String(ref v) => Display::fmt(v, formatter),
@@ -183,7 +188,6 @@ impl Display for Value {
             // Value::Point(ref v) => Debug::fmt(v, formatter),
             // Value::Polygon(ref v) => Debug::fmt(v, formatter),
             // Value::Curie(ref v) => Debug::fmt(v, formatter),
-            // Value::Hash(ref v) => Debug::fmt(v, formatter),
         }
     }
 }
@@ -203,7 +207,10 @@ impl Value {
             }
             // Kind::Curie,
             // Kind::Datetime,
-            // Kind::Hash,
+            Kind::Hash => {
+                let hash = s.parse::<Hash>()?;
+                Ok(Value::Hash(hash))
+            }
             Kind::Inapplicable => {
                 let s = s.to_lowercase();
                 if s == "na" || s == "n/a" {
@@ -265,6 +272,12 @@ impl From<ParseIntError> for ValueError {
 impl From<TextError> for ValueError {
     fn from(err: TextError) -> ValueError {
         ValueError::InvalidText(err)
+    }
+}
+
+impl From<HashError> for ValueError {
+    fn from(err: HashError) -> ValueError {
+        ValueError::InvalidHash(err)
     }
 }
 
