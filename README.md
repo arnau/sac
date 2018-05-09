@@ -39,15 +39,15 @@ check if a value conforms with a given datatype.
 * [x] `sac value check --type bool` — Check a boolean (true | false).
 * [ ] `sac value check --type curie` — Check a Curie.
 * [ ] `sac value check --type datetime`
-* [ ] `sac value check --type hash`
-* [ ] `sac value check --type inapplicable`
-* [ ] `sac value check --type integer`
+* [x] `sac value check --type hash`
+* [x] `sac value check --type inapplicable`
+* [x] `sac value check --type integer`
 * [ ] `sac value check --type list`
 * [ ] `sac value check --type period`
 * [ ] `sac value check --type point`
 * [ ] `sac value check --type polygon`
-* [ ] `sac value check --type string`
-* [ ] `sac value check --type text`
+* [x] `sac value check --type string`
+* [x] `sac value check --type text`
 * [ ] `sac value check --type timestamp`
 * [x] `sac value check --type url` — Check a Url.
 
