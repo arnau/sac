@@ -6,6 +6,7 @@
 
 use std::str::FromStr;
 use std::fmt::{self, Debug, Display};
+use super::Parse;
 
 #[derive(Debug, Fail)]
 pub enum HashError {
@@ -73,9 +74,9 @@ impl Display for Hash {
     }
 }
 
-impl FromStr for Hash {
+impl Parse for Hash {
     type Err = HashError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+    fn parse(s: &str) -> Result<Self, Self::Err> {
         let v: Vec<&str> = s.splitn(2, ':').collect();
 
         if v.len() != 2 {
@@ -107,9 +108,9 @@ mod tests {
 
     #[test]
     fn from_str() {
-        let hash = "sha-256:129332749e67eb9ab7390d7da2e88173367d001ac3e9e39f06e41690cd05e3ae"
-            .parse::<Hash>()
-            .unwrap();
+        let hash = Hash::parse(
+            "sha-256:129332749e67eb9ab7390d7da2e88173367d001ac3e9e39f06e41690cd05e3ae",
+        ).unwrap();
 
         assert_eq!(hash.alg, Alg::Sha2256);
         assert_eq!(
@@ -120,24 +121,24 @@ mod tests {
 
     #[test]
     fn fail_with_upper_hex() {
-        let hash = "sha-256:129332749E67EB9AB7390D7DA2E88173367D001AC3E9E39F06E41690CD05E3AE"
-            .parse::<Hash>();
+        let hash =
+            Hash::parse("sha-256:129332749E67EB9AB7390D7DA2E88173367D001AC3E9E39F06E41690CD05E3AE");
 
         assert_eq!(format!("{:?}", hash), "Err(InvalidValue)".to_owned());
     }
 
     #[test]
     fn fail_invalid_alg() {
-        let hash = "sha-sha-sha:129332749e67eb9ab7390d7da2e88173367d001ac3e9e39f06e41690cd05e3ae"
-            .parse::<Hash>();
+        let hash = Hash::parse(
+            "sha-sha-sha:129332749e67eb9ab7390d7da2e88173367d001ac3e9e39f06e41690cd05e3ae",
+        );
 
         assert_eq!(format!("{:?}", hash), "Err(InvalidAlgorithm)".to_owned());
     }
 
     #[test]
     fn fail_invalid_pattern() {
-        let hash =
-            "129332749e67eb9ab7390d7da2e88173367d001ac3e9e39f06e41690cd05e3ae".parse::<Hash>();
+        let hash = Hash::parse("129332749e67eb9ab7390d7da2e88173367d001ac3e9e39f06e41690cd05e3ae");
 
         assert_eq!(format!("{:?}", hash), "Err(Invalid)".to_owned());
     }

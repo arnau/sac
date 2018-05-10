@@ -59,12 +59,9 @@ pub enum ValueError {
 }
 
 /// An interface to guarantee values can be checked for correctness.
-///
-/// TODO: Consider using FromStr instead.
-pub trait Parse {
-    type Atom;
-    type Error;
-    fn parse(s: &str) -> Result<Self::Atom, Self::Error>;
+pub trait Parse: Sized {
+    type Err;
+    fn parse(s: &str) -> Result<Self, Self::Err>;
 }
 
 /// Represents a Blob Value.
@@ -208,7 +205,7 @@ impl Value {
             // Kind::Curie,
             // Kind::Datetime,
             Kind::Hash => {
-                let hash = s.parse::<Hash>()?;
+                let hash = Hash::parse(s)?;
                 Ok(Value::Hash(hash))
             }
             Kind::Inapplicable => {

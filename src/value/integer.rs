@@ -5,6 +5,7 @@
 // according to those terms.
 
 use std::fmt::{self, Debug, Display};
+// use super::Parse;
 
 /// An decimal integer.
 /// TODO: spec doesn't allow floating point numbers.
@@ -22,3 +23,10 @@ impl Display for Integer {
         Display::fmt(&self.0, formatter)
     }
 }
+
+// impl Parse for Integer {
+//     type Err = IntegerError;
+//     fn parse(s: &str) -> Result<Self, Self::Err> {
+
+//     }
+// }

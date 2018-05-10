@@ -52,9 +52,8 @@ impl Display for Url {
 }
 
 impl Parse for Url {
-    type Atom = Url;
-    type Error = UrlError;
-    fn parse(s: &str) -> Result<Self::Atom, Self::Error> {
+    type Err = UrlError;
+    fn parse(s: &str) -> Result<Self, Self::Err> {
         let u = url::Url::parse(s)?;
 
         if s.starts_with("http://") || s.starts_with("https://") {

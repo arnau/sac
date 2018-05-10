@@ -35,10 +35,9 @@ impl Display for Text {
 }
 
 impl Parse for Text {
-    type Atom = Text;
-    type Error = TextError;
+    type Err = TextError;
 
-    fn parse(s: &str) -> Result<Self::Atom, Self::Error> {
+    fn parse(s: &str) -> Result<Self, Self::Err> {
         let errors: Vec<TextError> = Parser::new(s)
             .filter_map(|ev| match ev {
                 // Escape inline html
