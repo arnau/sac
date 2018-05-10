@@ -8,6 +8,7 @@ use regex::Regex;
 use std::str::FromStr;
 use std::fmt::{self, Debug, Display};
 use failure;
+use super::Parse;
 
 /// A restricted version of a CURIE defined by the W3C.
 ///
@@ -35,9 +36,9 @@ impl Display for Curie {
     }
 }
 
-impl FromStr for Curie {
+impl Parse for Curie {
     type Err = failure::Error;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+    fn parse(s: &str) -> Result<Self, Self::Err> {
         let v: Vec<&str> = s.splitn(2, ':').collect();
 
         if v.len() < 2 {
@@ -151,7 +152,7 @@ mod tests {
 
     #[test]
     fn from_str() {
-        let curie = Curie::from_str("foo:bar").unwrap();
+        let curie = Curie::parse("foo:bar").unwrap();
 
         assert_eq!(curie.prefix, Prefix::new("foo"));
         assert_eq!(curie.reference, Reference::new("bar"));
@@ -159,7 +160,7 @@ mod tests {
 
     #[test]
     fn from_str_empty_ref() {
-        let curie = Curie::from_str("foo:").unwrap();
+        let curie = Curie::parse("foo:").unwrap();
 
         assert_eq!(curie.prefix, Prefix::new("foo"));
         assert_eq!(curie.reference, Reference::new(""));
@@ -167,14 +168,14 @@ mod tests {
 
     #[test]
     fn from_str_wrong_syntax() {
-        let res = Curie::from_str("foo");
+        let res = Curie::parse("foo");
 
         assert!(res.is_err(), "Expected curie to be an error");
     }
 
     #[test]
     fn from_str_wrong_reference() {
-        let res = Curie::from_str("foo:bar:");
+        let res = Curie::parse("foo:bar:");
 
         assert!(res.is_err(), "Expected curie to be an error");
     }
@@ -195,9 +196,26 @@ mod tests {
         #[test]
         fn from_valid_str() {
             assert!(
-                Prefix::from_str("bar").is_ok(),
+                Reference::from_str("bar").is_ok(),
                 "Expected reference to be a valid str"
             );
         }
+
+        #[test]
+        fn valid_with_slash() {
+            assert!(
+                Reference::from_str("bar/qux").is_ok(),
+                "Expected reference to be a valid str"
+            );
+        }
+
+        #[test]
+        fn valid_with_colon() {
+            assert!(
+                Reference::from_str("bar:qux").is_ok(),
+                "Expected reference to be a valid str"
+            );
+        }
+
     }
 }
