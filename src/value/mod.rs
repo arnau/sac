@@ -23,7 +23,7 @@ pub mod ser;
 pub mod de;
 
 use self::curie::{Curie, CurieError};
-use self::datetime::Datetime;
+use self::datetime::{Datetime, DatetimeError};
 use self::hash::{Hash, HashError};
 use self::integer::Integer;
 use self::period::Period;
@@ -60,6 +60,8 @@ pub enum ValueError {
     InvalidCurie(CurieError),
     #[fail(display = "Invalid timestamp")]
     InvalidTimestamp(TimestampError),
+    #[fail(display = "Invalid datetime")]
+    InvalidDatetime(DatetimeError),
 }
 
 /// An interface to guarantee values can be checked for correctness.
@@ -121,7 +123,6 @@ pub enum Value {
     // An decimal integer.
     // TODO: spec doesn't allow floating point numbers.
     Integer(Integer),
-    // TODO: ISO8601 datetime UTC only.
     Datetime(Datetime),
     Timestamp(Timestamp),
     // TODO: ISO8601 Period.
@@ -172,6 +173,7 @@ impl Display for Value {
         match *self {
             Value::Bool(ref v) => Display::fmt(v, formatter),
             Value::Curie(ref v) => Debug::fmt(v, formatter),
+            Value::Datetime(ref v) => Debug::fmt(v, formatter),
             Value::Hash(ref v) => Debug::fmt(v, formatter),
             Value::Inapplicable => Display::fmt("N/A", formatter),
             Value::Integer(ref v) => Display::fmt(v, formatter),
@@ -183,7 +185,6 @@ impl Display for Value {
             Value::Url(ref v) => Display::fmt(v, formatter),
             _ => unimplemented!(),
             // Value::List(ref v) => v.map(ToString).collect(),
-            // Value::Datetime(ref v) => Debug::fmt(v, formatter),
             // Value::Period(ref v) => Debug::fmt(v, formatter),
             // Value::Point(ref v) => Debug::fmt(v, formatter),
             // Value::Polygon(ref v) => Debug::fmt(v, formatter),
@@ -208,7 +209,10 @@ impl Value {
                 let c = Curie::parse(s)?;
                 Ok(Value::Curie(c))
             }
-            // Kind::Datetime,
+            Kind::Datetime => {
+                let d = Datetime::parse(s)?;
+                Ok(Value::Datetime(d))
+            }
             Kind::Hash => {
                 let hash = Hash::parse(s)?;
                 Ok(Value::Hash(hash))
@@ -295,6 +299,12 @@ impl From<CurieError> for ValueError {
 impl From<TimestampError> for ValueError {
     fn from(err: TimestampError) -> ValueError {
         ValueError::InvalidTimestamp(err)
+    }
+}
+
+impl From<DatetimeError> for ValueError {
+    fn from(err: DatetimeError) -> ValueError {
+        ValueError::InvalidDatetime(err)
     }
 }
 

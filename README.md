@@ -38,7 +38,8 @@ check if a value conforms with a given datatype.
 
 * [x] `sac value check --type bool` — Check a boolean (true | false).
 * [x] `sac value check --type curie` — Check a Curie.
-* [ ] `sac value check --type datetime`
+* [x] `sac value check --type datetime` — Check a ISO8601 date time in any
+    multiple accuracies.
 * [x] `sac value check --type hash` — Check for a qualified hash (with
     algorithm).
 * [x] `sac value check --type inapplicable` — Check an inapplicable value (N/A).
