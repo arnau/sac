@@ -7,8 +7,17 @@
 use regex::Regex;
 use std::str::FromStr;
 use std::fmt::{self, Debug, Display};
-use failure;
 use super::Parse;
+
+#[derive(Debug, Fail)]
+pub enum CurieError {
+    #[fail(display = "Invalid prefix. Ensure the prefix conforms to [a-z][a-z_-]+.")]
+    InvalidPrefix,
+    #[fail(display = "Invalid reference. Ensure there are no reserved characters.")]
+    InvalidReference,
+    #[fail(display = "Unexpected CURIE pattern. A CURIE must be <prefix>:<reference>")]
+    ParseError,
+}
 
 /// A restricted version of a CURIE defined by the W3C.
 ///
@@ -37,12 +46,12 @@ impl Display for Curie {
 }
 
 impl Parse for Curie {
-    type Err = failure::Error;
+    type Err = CurieError;
     fn parse(s: &str) -> Result<Self, Self::Err> {
         let v: Vec<&str> = s.splitn(2, ':').collect();
 
         if v.len() < 2 {
-            bail!("A curie must be of the form <prefix>:<value>")
+            Err(CurieError::ParseError)
         } else {
             let prefix = Prefix::from_str(v[0])?;
             let value = Reference::from_str(v[1])?;
@@ -82,12 +91,12 @@ impl Display for Prefix {
 }
 
 impl FromStr for Prefix {
-    type Err = failure::Error;
+    type Err = CurieError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if Self::is_valid(s) {
             Ok(Self::new(s))
         } else {
-            bail!("A prefix must conform `[a-z][a-z0-9-]+`")
+            Err(CurieError::InvalidPrefix)
         }
     }
 }
@@ -125,12 +134,12 @@ impl Display for Reference {
 }
 
 impl FromStr for Reference {
-    type Err = failure::Error;
+    type Err = CurieError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if Self::is_valid(s) {
             Ok(Self::new(s))
         } else {
-            bail!("Invalid CURIE reference")
+            Err(CurieError::InvalidReference)
         }
     }
 }
@@ -141,6 +150,21 @@ impl Reference {
     }
 
     // TODO: Validate conforms to RFC3987
+    //
+    //      reserved    = gen-delims / sub-delims
+    //      gen-delims  = ":" / "/" / "?" / "#" / "[" / "]" / "@"
+    //      sub-delims  = "!" / "$" / "&" / "'" / "(" / ")"
+    //      unreserved  = ALPHA / DIGIT / "-" / "." / "_" / "~"
+    //      pct-encoded = "%" HEXDIG HEXDIG
+    //
+    // Also, Identifiers are a subset of the above so a smarter reference
+    // implementation could identify different types of reference, such as:
+    //
+    //     enum Reference {
+    //       Any(String),   // foo:bar/far
+    //       Id(String),    // foo:bar ~> https://foo.org/records/bar (which could be seen as id=bar really
+    //       Facet(String), // foo:type=bar ~> https://foo.org/records/type=bar
+    //     }
     pub fn is_valid(s: &str) -> bool {
         !s.ends_with(':')
     }
@@ -210,9 +234,9 @@ mod tests {
         }
 
         #[test]
-        fn valid_with_colon() {
+        fn valid_with_equal() {
             assert!(
-                Reference::from_str("bar:qux").is_ok(),
+                Reference::from_str("bar=qux").is_ok(),
                 "Expected reference to be a valid str"
             );
         }

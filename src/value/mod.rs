@@ -22,7 +22,7 @@ pub mod url;
 pub mod ser;
 pub mod de;
 
-use self::curie::Curie;
+use self::curie::{Curie, CurieError};
 use self::datetime::Datetime;
 use self::hash::{Hash, HashError};
 use self::integer::Integer;
@@ -56,6 +56,8 @@ pub enum ValueError {
     InvalidText(TextError),
     #[fail(display = "Invalid hash")]
     InvalidHash(HashError),
+    #[fail(display = "Invalid curie")]
+    InvalidCurie(CurieError),
 }
 
 /// An interface to guarantee values can be checked for correctness.
@@ -169,6 +171,7 @@ impl Display for Value {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Value::Bool(ref v) => Display::fmt(v, formatter),
+            Value::Curie(ref v) => Debug::fmt(v, formatter),
             Value::Hash(ref v) => Debug::fmt(v, formatter),
             Value::Inapplicable => Display::fmt("N/A", formatter),
             Value::Integer(ref v) => Display::fmt(v, formatter),
@@ -184,7 +187,6 @@ impl Display for Value {
             // Value::Period(ref v) => Debug::fmt(v, formatter),
             // Value::Point(ref v) => Debug::fmt(v, formatter),
             // Value::Polygon(ref v) => Debug::fmt(v, formatter),
-            // Value::Curie(ref v) => Debug::fmt(v, formatter),
         }
     }
 }
@@ -202,7 +204,10 @@ impl Value {
                 let b = s.parse::<bool>()?;
                 Ok(Value::Bool(b))
             }
-            // Kind::Curie,
+            Kind::Curie => {
+                let c = Curie::parse(s)?;
+                Ok(Value::Curie(c))
+            }
             // Kind::Datetime,
             Kind::Hash => {
                 let hash = Hash::parse(s)?;
@@ -275,6 +280,12 @@ impl From<TextError> for ValueError {
 impl From<HashError> for ValueError {
     fn from(err: HashError) -> ValueError {
         ValueError::InvalidHash(err)
+    }
+}
+
+impl From<CurieError> for ValueError {
+    fn from(err: CurieError) -> ValueError {
+        ValueError::InvalidCurie(err)
     }
 }
 
