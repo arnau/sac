@@ -37,17 +37,18 @@ blob hash`.
 check if a value conforms with a given datatype.
 
 * [x] `sac value check --type bool` — Check a boolean (true | false).
-* [ ] `sac value check --type curie` — Check a Curie.
+* [x] `sac value check --type curie` — Check a Curie.
 * [ ] `sac value check --type datetime`
-* [x] `sac value check --type hash`
-* [x] `sac value check --type inapplicable`
-* [x] `sac value check --type integer`
+* [x] `sac value check --type hash` — Check for a qualified hash (with
+    algorithm).
+* [x] `sac value check --type inapplicable` — Check an inapplicable value (N/A).
+* [x] `sac value check --type integer` — Check a signed integer.
 * [ ] `sac value check --type list`
 * [ ] `sac value check --type period`
 * [ ] `sac value check --type point`
 * [ ] `sac value check --type polygon`
-* [x] `sac value check --type string`
-* [x] `sac value check --type text`
+* [x] `sac value check --type string` — Check a UTF-8 string.
+* [x] `sac value check --type text` — Check a Common Markdown text.
 * [ ] `sac value check --type timestamp`
 * [x] `sac value check --type url` — Check a Url.
 
