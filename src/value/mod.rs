@@ -30,7 +30,7 @@ use self::period::Period;
 use self::point::Point;
 use self::polygon::Polygon;
 use self::text::{Text, TextError};
-use self::timestamp::Timestamp;
+use self::timestamp::{Timestamp, TimestampError};
 use self::url::{Url, UrlError};
 use kind::Kind;
 
@@ -58,6 +58,8 @@ pub enum ValueError {
     InvalidHash(HashError),
     #[fail(display = "Invalid curie")]
     InvalidCurie(CurieError),
+    #[fail(display = "Invalid timestamp")]
+    InvalidTimestamp(TimestampError),
 }
 
 /// An interface to guarantee values can be checked for correctness.
@@ -121,8 +123,6 @@ pub enum Value {
     Integer(Integer),
     // TODO: ISO8601 datetime UTC only.
     Datetime(Datetime),
-    // TODO: ISO8601 timestamp UTC only. Requires all atoms in date and time.
-    // It could (should?) be represented as epoch.
     Timestamp(Timestamp),
     // TODO: ISO8601 Period.
     Period(Period),
@@ -177,13 +177,13 @@ impl Display for Value {
             Value::Integer(ref v) => Display::fmt(v, formatter),
             Value::String(ref v) => Display::fmt(v, formatter),
             Value::Text(ref v) => Display::fmt(v, formatter),
+            Value::Timestamp(ref v) => Debug::fmt(v, formatter),
             Value::Unknown => Display::fmt("null", formatter),
             Value::Untyped(ref v) => Display::fmt(v, formatter),
             Value::Url(ref v) => Display::fmt(v, formatter),
             _ => unimplemented!(),
             // Value::List(ref v) => v.map(ToString).collect(),
             // Value::Datetime(ref v) => Debug::fmt(v, formatter),
-            // Value::Timestamp(ref v) => Debug::fmt(v, formatter),
             // Value::Period(ref v) => Debug::fmt(v, formatter),
             // Value::Point(ref v) => Debug::fmt(v, formatter),
             // Value::Polygon(ref v) => Debug::fmt(v, formatter),
@@ -234,7 +234,10 @@ impl Value {
                 let text = Text::parse(s)?;
                 Ok(Value::Text(text))
             }
-            // Kind::Timestamp,
+            Kind::Timestamp => {
+                let t = Timestamp::parse(s)?;
+                Ok(Value::Timestamp(t))
+            }
             Kind::Unknown => {
                 let s = s.to_lowercase();
                 if s == "null" {
@@ -286,6 +289,12 @@ impl From<HashError> for ValueError {
 impl From<CurieError> for ValueError {
     fn from(err: CurieError) -> ValueError {
         ValueError::InvalidCurie(err)
+    }
+}
+
+impl From<TimestampError> for ValueError {
+    fn from(err: TimestampError) -> ValueError {
+        ValueError::InvalidTimestamp(err)
     }
 }
 

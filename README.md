@@ -49,7 +49,7 @@ check if a value conforms with a given datatype.
 * [ ] `sac value check --type polygon`
 * [x] `sac value check --type string` — Check a UTF-8 string.
 * [x] `sac value check --type text` — Check a Common Markdown text.
-* [ ] `sac value check --type timestamp`
+* [x] `sac value check --type timestamp` — Check a RFC3339 UTC timestamp.
 * [x] `sac value check --type url` — Check a Url.
 
 
