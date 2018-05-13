@@ -26,7 +26,7 @@ use self::curie::{Curie, CurieError};
 use self::datetime::{Datetime, DatetimeError};
 use self::hash::{Hash, HashError};
 use self::integer::Integer;
-use self::period::Period;
+use self::period::{Period, PeriodError};
 use self::point::Point;
 use self::polygon::Polygon;
 use self::text::{Text, TextError};
@@ -62,6 +62,8 @@ pub enum ValueError {
     InvalidTimestamp(TimestampError),
     #[fail(display = "Invalid datetime")]
     InvalidDatetime(DatetimeError),
+    #[fail(display = "Invalid period")]
+    InvalidPeriod(PeriodError),
 }
 
 /// An interface to guarantee values can be checked for correctness.
@@ -125,7 +127,6 @@ pub enum Value {
     Integer(Integer),
     Datetime(Datetime),
     Timestamp(Timestamp),
-    // TODO: ISO8601 Period.
     Period(Period),
     // TODO: GeoJSON.
     Point(Point),
@@ -177,6 +178,7 @@ impl Display for Value {
             Value::Hash(ref v) => Debug::fmt(v, formatter),
             Value::Inapplicable => Display::fmt("N/A", formatter),
             Value::Integer(ref v) => Display::fmt(v, formatter),
+            Value::Period(ref v) => Debug::fmt(v, formatter),
             Value::String(ref v) => Display::fmt(v, formatter),
             Value::Text(ref v) => Display::fmt(v, formatter),
             Value::Timestamp(ref v) => Debug::fmt(v, formatter),
@@ -185,7 +187,6 @@ impl Display for Value {
             Value::Url(ref v) => Display::fmt(v, formatter),
             _ => unimplemented!(),
             // Value::List(ref v) => v.map(ToString).collect(),
-            // Value::Period(ref v) => Debug::fmt(v, formatter),
             // Value::Point(ref v) => Debug::fmt(v, formatter),
             // Value::Polygon(ref v) => Debug::fmt(v, formatter),
         }
@@ -230,7 +231,10 @@ impl Value {
                 Ok(Value::Integer(Integer(i)))
             }
             // Kind::List(Box<Kind>),
-            // Kind::Period,
+            Kind::Period => {
+                let p = Period::parse(s)?;
+                Ok(Value::Period(p))
+            }
             // Kind::Point,
             // Kind::Polygon,
             Kind::String => Ok(Value::String(s.to_owned())),
@@ -305,6 +309,12 @@ impl From<TimestampError> for ValueError {
 impl From<DatetimeError> for ValueError {
     fn from(err: DatetimeError) -> ValueError {
         ValueError::InvalidDatetime(err)
+    }
+}
+
+impl From<PeriodError> for ValueError {
+    fn from(err: PeriodError) -> ValueError {
+        ValueError::InvalidPeriod(err)
     }
 }
 
