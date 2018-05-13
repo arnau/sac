@@ -44,7 +44,6 @@ check if a value conforms with a given datatype.
     algorithm).
 * [x] `sac value check --type inapplicable` — Check an inapplicable value (N/A).
 * [x] `sac value check --type integer` — Check a signed integer.
-* [ ] `sac value check --type list`
 * [x] `sac value check --type period` — Check a ISO8601 period in any multiple
     forms and accuracies.
 * [ ] `sac value check --type point`
