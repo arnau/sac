@@ -36,22 +36,21 @@ blob hash`.
 `sac value` offers a set of tools to work with values. For example, you can
 check if a value conforms with a given datatype.
 
-* [x] `sac value check --type bool` — Check a boolean (true | false).
-* [x] `sac value check --type curie` — Check a Curie.
-* [x] `sac value check --type datetime` — Check a ISO8601 date time in any
-    multiple accuracies.
-* [x] `sac value check --type hash` — Check for a qualified hash (with
-    algorithm).
-* [x] `sac value check --type inapplicable` — Check an inapplicable value (N/A).
-* [x] `sac value check --type integer` — Check a signed integer.
-* [x] `sac value check --type period` — Check a ISO8601 period in any multiple
-    forms and accuracies.
-* [ ] `sac value check --type point`
-* [ ] `sac value check --type polygon`
-* [x] `sac value check --type string` — Check a UTF-8 string.
-* [x] `sac value check --type text` — Check a Common Markdown text.
-* [x] `sac value check --type timestamp` — Check a RFC3339 UTC timestamp.
-* [x] `sac value check --type url` — Check a Url.
+|Done|Command|Description|
+|----|-------|-----------|
+|[x]|`sac value check --type bool` | Check a boolean (true / false).|
+|[x]|`sac value check --type curie`| Check a Curie.|
+|[x]|`sac value check --type datetime`| Check a ISO8601 date time in any multiple accuracies.|
+|[x]|`sac value check --type hash` | Check for a qualified hash (with algorithm).|
+|[x]|`sac value check --type inapplicable`| Check an inapplicable value (N/A).|
+|[x]|`sac value check --type integer`| Check a signed integer.|
+|[x]|`sac value check --type period`| Check a ISO8601 period in any multiple forms and accuracies.|
+|[ ]|`sac value check --type point`| |
+|[ ]|`sac value check --type polygon`| |
+|[x]|`sac value check --type string`| Check a UTF-8 string.|
+|[x]|`sac value check --type text`| Check a Common Markdown text.|
+|[x]|`sac value check --type timestamp`| Check a RFC3339 UTC timestamp.|
+|[x]|`sac value check --type url`| Check a Url.|
 
 
 ## CLI Design
