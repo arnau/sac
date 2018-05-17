@@ -4,7 +4,7 @@
 // at your option. This file may not be copied, modified, or distributed except
 // according to those terms.
 
-use regex::{Regex, RegexSet};
+use regex::RegexSet;
 use std::fmt::{self, Debug, Display};
 use super::Parse;
 use super::datetime::{Datetime, DatetimeError};

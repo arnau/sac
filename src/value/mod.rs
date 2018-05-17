@@ -27,7 +27,7 @@ use self::datetime::{Datetime, DatetimeError};
 use self::hash::{Hash, HashError};
 use self::integer::Integer;
 use self::period::{Period, PeriodError};
-use self::point::Point;
+use self::point::{Point, PointError};
 use self::polygon::Polygon;
 use self::text::{Text, TextError};
 use self::timestamp::{Timestamp, TimestampError};
@@ -64,6 +64,8 @@ pub enum ValueError {
     InvalidDatetime(DatetimeError),
     #[fail(display = "Invalid period")]
     InvalidPeriod(PeriodError),
+    #[fail(display = "Invalid point")]
+    InvalidPoint(PointError),
 }
 
 /// An interface to guarantee values can be checked for correctness.
@@ -173,21 +175,21 @@ impl Display for Value {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Value::Bool(ref v) => Display::fmt(v, formatter),
-            Value::Curie(ref v) => Debug::fmt(v, formatter),
-            Value::Datetime(ref v) => Debug::fmt(v, formatter),
-            Value::Hash(ref v) => Debug::fmt(v, formatter),
+            Value::Curie(ref v) => Display::fmt(v, formatter),
+            Value::Datetime(ref v) => Display::fmt(v, formatter),
+            Value::Hash(ref v) => Display::fmt(v, formatter),
             Value::Inapplicable => Display::fmt("N/A", formatter),
             Value::Integer(ref v) => Display::fmt(v, formatter),
-            Value::Period(ref v) => Debug::fmt(v, formatter),
+            Value::Period(ref v) => Display::fmt(v, formatter),
+            Value::Point(ref v) => Display::fmt(v, formatter),
             Value::String(ref v) => Display::fmt(v, formatter),
             Value::Text(ref v) => Display::fmt(v, formatter),
-            Value::Timestamp(ref v) => Debug::fmt(v, formatter),
+            Value::Timestamp(ref v) => Display::fmt(v, formatter),
             Value::Unknown => Display::fmt("null", formatter),
             Value::Untyped(ref v) => Display::fmt(v, formatter),
             Value::Url(ref v) => Display::fmt(v, formatter),
             _ => unimplemented!(),
             // Value::List(ref v) => v.map(ToString).collect(),
-            // Value::Point(ref v) => Debug::fmt(v, formatter),
             // Value::Polygon(ref v) => Debug::fmt(v, formatter),
         }
     }
@@ -235,7 +237,10 @@ impl Value {
                 let p = Period::parse(s)?;
                 Ok(Value::Period(p))
             }
-            // Kind::Point,
+            Kind::Point => {
+                let p = Point::parse(s)?;
+                Ok(Value::Point(p))
+            }
             // Kind::Polygon,
             Kind::String => Ok(Value::String(s.to_owned())),
             Kind::Text => {
@@ -315,6 +320,12 @@ impl From<DatetimeError> for ValueError {
 impl From<PeriodError> for ValueError {
     fn from(err: PeriodError) -> ValueError {
         ValueError::InvalidPeriod(err)
+    }
+}
+
+impl From<PointError> for ValueError {
+    fn from(err: PointError) -> ValueError {
+        ValueError::InvalidPoint(err)
     }
 }
 

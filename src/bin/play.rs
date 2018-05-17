@@ -1,12 +1,6 @@
-extern crate url;
-
-use url::Url;
-
 fn main() {
-    let base = Url::parse("http://dummy.org/records/").unwrap();
-    let u = base.join("type=bar").unwrap();
+    let f_str = "1";
+    let f = f_str.parse::<f64>();
 
-    println!("{:?}", u);
-    println!("{:?}", u.path());
-    println!("{:?}", u.path_segments());
+    println!("{:?}", f);
 }
