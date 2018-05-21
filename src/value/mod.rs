@@ -43,29 +43,29 @@ pub enum ValueError {
     #[fail(display = "Unknown type {}", kind)]
     UnknownType { kind: String },
     #[fail(display = "Invalid url")]
-    InvalidUrl(UrlError),
+    InvalidUrl(#[cause] UrlError),
     #[fail(display = "Invalid boolean")]
-    InvalidBool(ParseBoolError),
+    InvalidBool(#[cause] ParseBoolError),
     #[fail(display = "Invalid integer")]
-    InvalidInteger(ParseIntError),
+    InvalidInteger(#[cause] ParseIntError),
     #[fail(display = "Invalid unknown")]
     InvalidUnknown,
     #[fail(display = "Invalid inapplicable")]
     InvalidInapplicable,
     #[fail(display = "Invalid text")]
-    InvalidText(TextError),
+    InvalidText(#[cause] TextError),
     #[fail(display = "Invalid hash")]
-    InvalidHash(HashError),
+    InvalidHash(#[cause] HashError),
     #[fail(display = "Invalid curie")]
-    InvalidCurie(CurieError),
+    InvalidCurie(#[cause] CurieError),
     #[fail(display = "Invalid timestamp")]
-    InvalidTimestamp(TimestampError),
+    InvalidTimestamp(#[cause] TimestampError),
     #[fail(display = "Invalid datetime")]
-    InvalidDatetime(DatetimeError),
+    InvalidDatetime(#[cause] DatetimeError),
     #[fail(display = "Invalid period")]
-    InvalidPeriod(PeriodError),
+    InvalidPeriod(#[cause] PeriodError),
     #[fail(display = "Invalid point")]
-    InvalidPoint(PointError),
+    InvalidPoint(#[cause] PointError),
 }
 
 /// An interface to guarantee values can be checked for correctness.
