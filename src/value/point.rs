@@ -35,6 +35,42 @@ pub enum Point {
     PointZM(f64, f64, f64, f64),
 }
 
+impl Point {
+    pub fn x(&self) -> f64 {
+        match *self {
+            Point::Point(x, _) => x,
+            Point::PointZ(x, _, _) => x,
+            Point::PointM(x, _, _) => x,
+            Point::PointZM(x, _, _, _) => x,
+        }
+    }
+
+    pub fn y(&self) -> f64 {
+        match *self {
+            Point::Point(_, y) => y,
+            Point::PointZ(_, y, _) => y,
+            Point::PointM(_, y, _) => y,
+            Point::PointZM(_, y, _, _) => y,
+        }
+    }
+
+    pub fn z(&self) -> Option<f64> {
+        match *self {
+            Point::PointZ(_, _, z) => Some(z),
+            Point::PointZM(_, _, z, _) => Some(z),
+            _ => None,
+        }
+    }
+
+    pub fn m(&self) -> Option<f64> {
+        match *self {
+            Point::PointM(_, _, m) => Some(m),
+            Point::PointZM(_, _, _, m) => Some(m),
+            _ => None,
+        }
+    }
+}
+
 impl Debug for Point {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         write!(formatter, "{}", &self)
@@ -84,4 +120,28 @@ impl Parse for Point {
             Err(PointError::ParseError)
         }
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parse_point() {
+        let point = Point::parse("POINT(0 0)").unwrap();
+
+        assert_eq!(point.x(), 0.0);
+        assert_eq!(point.y(), 0.0);
+        assert_eq!(point.z(), None);
+    }
+
+    #[test]
+    fn parse_pointz() {
+        let point = Point::parse("POINTZ(0 0 1)").unwrap();
+
+        assert_eq!(point.x(), 0.0);
+        assert_eq!(point.y(), 0.0);
+        assert_eq!(point.z(), Some(1.0));
+    }
+
 }
