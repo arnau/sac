@@ -45,7 +45,7 @@ check if a value conforms with a given datatype.
 |[x]|`sac value check --type inapplicable`| Check an inapplicable value (N/A).|
 |[x]|`sac value check --type integer`| Check a signed integer.|
 |[x]|`sac value check --type period`| Check a ISO8601 period in any multiple forms and accuracies.|
-|[ ]|`sac value check --type point`| |
+|[x]|`sac value check --type point`| Check a WKT point as defined by OGC 06-104r4 (OpenGIS® Implementation Standard for Geographic information - Simple feature access - Part 2: SQL Option). |
 |[ ]|`sac value check --type polygon`| |
 |[x]|`sac value check --type string`| Check a UTF-8 string.|
 |[x]|`sac value check --type text`| Check a Common Markdown text.|
