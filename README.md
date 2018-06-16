@@ -34,23 +34,27 @@ blob hash`.
 ### Values
 
 `sac value` offers a set of tools to work with values. For example, you can
-check if a value conforms with a given datatype.
+check if a value conforms with a given datatype:
 
-|Done|Command|Description|
-|----|-------|-----------|
-|[x]|`sac value check --type bool` | Check a boolean (true / false).|
-|[x]|`sac value check --type curie`| Check a Curie.|
-|[x]|`sac value check --type datetime`| Check a ISO8601 date time in any multiple accuracies.|
-|[x]|`sac value check --type hash` | Check for a qualified hash (with algorithm).|
-|[x]|`sac value check --type inapplicable`| Check an inapplicable value (N/A).|
-|[x]|`sac value check --type integer`| Check a signed integer.|
-|[x]|`sac value check --type period`| Check a ISO8601 period in any multiple forms and accuracies.|
-|[x]|`sac value check --type point`| Check a WKT point as defined by OGC 06-104r4 (OpenGIS® Implementation Standard for Geographic information - Simple feature access - Part 2: SQL Option). |
-|[x]|`sac value check --type polygon`| Check a WKT polygon as defined by OGC 06-104r4 (OpenGIS® Implementation Standard for Geographic information - Simple feature access - Part 2: SQL Option). |
-|[x]|`sac value check --type string`| Check a UTF-8 string.|
-|[x]|`sac value check --type text`| Check a Common Markdown text.|
-|[x]|`sac value check --type timestamp`| Check a RFC3339 UTC timestamp.|
-|[x]|`sac value check --type url`| Check a Url.|
+```sh
+sac value check --type <type>
+```
+
+### types
+
+* [x] `bool` — Boolean (true / false).
+* [x] `curie` — Curie.
+* [x] `datetime` — ISO8601 date time in any multiple accuracies.
+* [x] `hash` — Qualified hash (with algorithm).
+* [x] `inapplicable` — Inapplicable value (N/A).
+* [x] `integer` — Signed integer.
+* [x] `period` — ISO8601 period in any multiple forms and accuracies.
+* [x] `point` — WKT point as defined by OGC 06-104r4 (OpenGIS® Implementation Standard for Geographic information - Simple feature access - Part 2: SQL Option).
+* [x] `polygon` — WKT polygon as defined by OGC 06-104r4 (OpenGIS® Implementation Standard for Geographic information - Simple feature access - Part 2: SQL Option).
+* [x] `string` — UTF-8 string.
+* [x] `text` — Common Markdown text.
+* [x] `timestamp` — RFC3339 UTC timestamp.
+* [x] `url` — Url.
 
 
 ## CLI Design
