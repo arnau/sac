@@ -5,8 +5,8 @@
 // according to those terms.
 
 use std::fmt::{self, Debug, Display};
-use std::str::{FromStr, ParseBoolError};
 use std::num::ParseIntError;
+use std::str::{FromStr, ParseBoolError};
 
 pub mod curie;
 pub mod datetime;
@@ -19,8 +19,8 @@ pub mod text;
 pub mod timestamp;
 pub mod url;
 
-pub mod ser;
 pub mod de;
+pub mod ser;
 
 use self::curie::{Curie, CurieError};
 use self::datetime::{Datetime, DatetimeError};
@@ -28,7 +28,7 @@ use self::hash::{Hash, HashError};
 use self::integer::Integer;
 use self::period::{Period, PeriodError};
 use self::point::{Point, PointError};
-use self::polygon::Polygon;
+use self::polygon::{Polygon, PolygonError};
 use self::text::{Text, TextError};
 use self::timestamp::{Timestamp, TimestampError};
 use self::url::{Url, UrlError};
@@ -66,6 +66,8 @@ pub enum ValueError {
     InvalidPeriod(#[cause] PeriodError),
     #[fail(display = "Invalid point")]
     InvalidPoint(#[cause] PointError),
+    #[fail(display = "Invalid polygon")]
+    InvalidPolygon(#[cause] PolygonError),
 }
 
 /// An interface to guarantee values can be checked for correctness.
@@ -130,9 +132,7 @@ pub enum Value {
     Datetime(Datetime),
     Timestamp(Timestamp),
     Period(Period),
-    // TODO: GeoJSON.
     Point(Point),
-    // TODO: GeoJSON.
     Polygon(Polygon),
     Curie(Curie),
     // Hex with hashing algorithm
@@ -182,6 +182,7 @@ impl Display for Value {
             Value::Integer(ref v) => Display::fmt(v, formatter),
             Value::Period(ref v) => Display::fmt(v, formatter),
             Value::Point(ref v) => Display::fmt(v, formatter),
+            Value::Polygon(ref v) => Debug::fmt(v, formatter),
             Value::String(ref v) => Display::fmt(v, formatter),
             Value::Text(ref v) => Display::fmt(v, formatter),
             Value::Timestamp(ref v) => Display::fmt(v, formatter),
@@ -190,7 +191,6 @@ impl Display for Value {
             Value::Url(ref v) => Display::fmt(v, formatter),
             _ => unimplemented!(),
             // Value::List(ref v) => v.map(ToString).collect(),
-            // Value::Polygon(ref v) => Debug::fmt(v, formatter),
         }
     }
 }
@@ -241,7 +241,10 @@ impl Value {
                 let p = Point::parse(s)?;
                 Ok(Value::Point(p))
             }
-            // Kind::Polygon,
+            Kind::Polygon => {
+                let p = Polygon::parse(s)?;
+                Ok(Value::Polygon(p))
+            }
             Kind::String => Ok(Value::String(s.to_owned())),
             Kind::Text => {
                 let text = Text::parse(s)?;
@@ -329,10 +332,16 @@ impl From<PointError> for ValueError {
     }
 }
 
+impl From<PolygonError> for ValueError {
+    fn from(err: PolygonError) -> ValueError {
+        ValueError::InvalidPolygon(err)
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::*;
     use super::super::kind::Kind;
+    use super::*;
 
     #[test]
     fn parse_bool() {
