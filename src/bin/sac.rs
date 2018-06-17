@@ -131,8 +131,7 @@ fn main() {
                 match commands::value::check(raw, kind.clone()) {
                     Ok(v) => println!("The value {} is a valid {}", v, kind),
                     Err(err) => {
-                        // TODO: Improve error message
-                        eprintln!("Invalid value: {}", err);
+                        eprintln!("{}", err);
                         process::exit(1)
                     }
                 }

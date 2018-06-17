@@ -12,8 +12,8 @@ use std::fmt::{self, Debug, Display};
 pub enum PointError {
     #[fail(display = "Invalid WKT point. Valid examples:\n\n  POINT (0 1)\n  POINTZ (1 2 3)\n")]
     ParseError,
-    #[fail(display = "Unexpected vector. Expected length 2")]
-    UnexpectedVectorLength,
+    #[fail(display = "Unexpected vector. Expected length {}", _0)]
+    UnexpectedVectorLength(u8),
 }
 
 pub trait Coord: Clone + Display + Debug {
@@ -37,7 +37,7 @@ impl Coord for Coord2 {
         if v.len() == 2 {
             Ok(Coord2(v[0], v[1]))
         } else {
-            Err(PointError::UnexpectedVectorLength)
+            Err(PointError::UnexpectedVectorLength(2))
         }
     }
 }
@@ -81,7 +81,7 @@ impl Coord for Coord3 {
         if v.len() == 3 {
             Ok(Coord3(v[0], v[1], v[2]))
         } else {
-            Err(PointError::UnexpectedVectorLength)
+            Err(PointError::UnexpectedVectorLength(3))
         }
     }
 }

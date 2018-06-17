@@ -17,9 +17,9 @@ pub enum PolygonError {
         display = "Invalid WKT polygon. Valid examples:\n\n  POLYGON ((0 10, 10 20, 20 0))\n  POLYGON ((0 10, 10 20, 20 0), (2 8, 8 18, 18 2))\n  POLYGONZ ((0 0 1, 1 1 1, 2 2 1))\n"
     )]
     ParseError,
-    #[fail(display = "Unexpected number.")]
+    #[fail(display = "Unexpected number in polygon.")]
     ParseFloatError(#[cause] ParseFloatError),
-    #[fail(display = "Invalid coordinate. Expected {} values.", _0)]
+    #[fail(display = "Expected {} polygon coordinates.", _0)]
     InvalidCoord(String),
 }
 
