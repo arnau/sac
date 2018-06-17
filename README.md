@@ -20,15 +20,41 @@ cp target/release/sac $MYBINS/sac
 See the [manual](MANUAL.md)
 
 
-### Items
+### Blobs
 
-`sac item` offers a set of tools to work with items. For example, you can
-canonicalise items `sac item canon` or compute its hash `sac item hash`.
+`sac blob` offers a set of tools to work with blobs (also known as items). For
+example, you can canonicalise a blob `sac blob canon` or compute its hash `sac
+blob hash`.
 
-* [x] `item canon` — Canonicalise item (json).
-* [ ] `item canon --from csv` — Canonicalise item (csv).
-* [x] `item hash` — Hash item (SHA-2 256).
-* [ ] `item hash -a blake2` — Hash item (non SHA-2 256).
+* [x] `sac blob canon` — Canonicalise item (json).
+* [ ] `sac blob canon --from csv` — Canonicalise item (csv).
+* [x] `sac blob hash` — Hash item (SHA-2 256).
+* [ ] `sac blob hash -a blake2` — Hash item (non SHA-2 256).
+
+### Values
+
+`sac value` offers a set of tools to work with values. For example, you can
+check if a value conforms with a given datatype:
+
+```sh
+sac value check --type <type>
+```
+
+### types
+
+* [x] `bool` — Boolean (true / false).
+* [x] `curie` — Curie.
+* [x] `datetime` — ISO8601 date time in any multiple accuracies.
+* [x] `hash` — Qualified hash (with algorithm).
+* [x] `inapplicable` — Inapplicable value (N/A).
+* [x] `integer` — Signed integer.
+* [x] `period` — ISO8601 period in any multiple forms and accuracies.
+* [x] `point` — WKT point as defined by OGC 06-104r4 (OpenGIS® Implementation Standard for Geographic information - Simple feature access - Part 2: SQL Option).
+* [x] `polygon` — WKT polygon as defined by OGC 06-104r4 (OpenGIS® Implementation Standard for Geographic information - Simple feature access - Part 2: SQL Option).
+* [x] `string` — UTF-8 string.
+* [x] `text` — Common Markdown text.
+* [x] `timestamp` — RFC3339 UTC timestamp.
+* [x] `url` — Url.
 
 
 ## CLI Design

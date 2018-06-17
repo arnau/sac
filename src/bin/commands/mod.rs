@@ -1,13 +1,21 @@
-use sac::{digest, item};
+// Copyright 2018 Arnau Siches
+//
+// Licensed under the MIT license <LICENSE or http://opensource.org/licenses/MIT>,
+// at your option. This file may not be copied, modified, or distributed except
+// according to those terms.
+
+pub mod value;
+
+use sac::{blob, digest};
 use failure::Error;
 
 pub fn item_canon(raw: &str) -> Result<String, Error> {
-    item::from_json(raw).and_then(|item| item::to_json(&item))
+    blob::from_json(raw).and_then(|blob| blob::to_json(&blob))
 }
 
 pub fn item_hash(raw: &str, force_flag: bool) -> Result<String, Error> {
-    let item = item::from_json(raw)?;
-    let hash = item.hash();
+    let blob = blob::from_json(raw)?;
+    let hash = blob.hash();
 
     if force_flag {
         Ok(hash)

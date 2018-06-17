@@ -1,3 +1,11 @@
+// Copyright 2018 Arnau Siches
+//
+// Licensed under the MIT license <LICENSE or http://opensource.org/licenses/MIT>,
+// at your option. This file may not be copied, modified, or distributed except
+// according to those terms.
+
+//! Fieldname
+
 use std::str::FromStr;
 use regex::Regex;
 use std::fmt;

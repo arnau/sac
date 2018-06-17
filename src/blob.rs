@@ -1,3 +1,11 @@
+// Copyright 2018 Arnau Siches
+//
+// Licensed under the MIT license <LICENSE or http://opensource.org/licenses/MIT>,
+// at your option. This file may not be copied, modified, or distributed except
+// according to those terms.
+
+//! Blob of data (item resource in the spec)
+
 use failure::Error;
 use serde_json;
 use std::str::FromStr;
@@ -11,11 +19,11 @@ use serde::ser::{Serialize, SerializeMap, Serializer};
 use field::Fieldname;
 use value::Value;
 
-type Blob = BTreeMap<Fieldname, Value>;
+type Nub = BTreeMap<Fieldname, Value>;
 
 // https://docs.rs/serde-transcode/1.0.0/serde_transcode/
 
-/// Serialises an Item into the canonical JSON string. This is:
+/// Serialises a Blob into the canonical JSON string. This is:
 /// * Must be a valid JSON object according to RFC7159.
 /// * All insignificant whitespace according to RFC7159 MUST be removed.
 /// * Object keys must be a valid field name (alphabet of lower-case letters
@@ -33,32 +41,32 @@ type Blob = BTreeMap<Fieldname, Value>;
 /// {"foo": "abc", "bar": "xyz"} # => Ok: {"bar":"xyz","foo":"abc"}
 /// {"Foo": "abc"}               # => Error: invalid field name
 /// ```
-pub fn to_json(item: &Item) -> Result<String, Error> {
-    let s = serde_json::to_string(&item).map(|x| uppercase_hex(&x))?;
+pub fn to_json(blob: &Blob) -> Result<String, Error> {
+    let s = serde_json::to_string(&blob).map(|x| uppercase_hex(&x))?;
 
     Ok(s)
 }
 
-/// Deserialises a valid JSON object into an Item. Note that the JSON object
+/// Deserialises a valid JSON object into a Blob. Note that the JSON object
 /// must have valid keys as restricted by the canonicalisation algorithm.
-pub fn from_json(s: &str) -> Result<Item, Error> {
-    Item::from_str(s)
+pub fn from_json(s: &str) -> Result<Blob, Error> {
+    Blob::from_str(s)
 }
 
-/// Represents an Item resource.
+/// Represents a Blob resource.
 ///
 /// # Examples
 ///
 /// ```
 /// let raw = r#"{"foo": "abc", "bar": "xyz"}"#;
-/// let item = sac::item::from_json(raw).unwrap();
-/// assert_eq!(item.hash(), "5dd4fe3b0de91882dae86b223ca531b5c8f2335d9ee3fd0ab18dfdc2871d0c61");
+/// let blob = sac::blob::from_json(raw).unwrap();
+/// assert_eq!(blob.hash(), "5dd4fe3b0de91882dae86b223ca531b5c8f2335d9ee3fd0ab18dfdc2871d0c61");
 /// ```
 #[derive(Debug, Deserialize, Default)]
-pub struct Item(Blob);
-impl Item {
+pub struct Blob(Nub);
+impl Blob {
     pub fn new() -> Self {
-        Item(BTreeMap::new())
+        Blob(BTreeMap::new())
     }
 
     // TODO: Add key, value validation here. Result<(), Error>
@@ -66,7 +74,7 @@ impl Item {
         self.0.insert(k, v);
     }
 
-    pub fn map(&self) -> Blob {
+    pub fn nub(&self) -> Nub {
         self.0.clone()
     }
 
@@ -82,16 +90,28 @@ impl Item {
     }
 }
 
-impl FromStr for Item {
-    type Err = Error;
-    fn from_str(s: &str) -> Result<Item, Self::Err> {
-        let item = serde_json::from_str::<Item>(s)?;
+// TODO: https://doc.rust-lang.org/std/hash/trait.Hash.html
+// pub trait Hash {
+//     fn hash<H>(&self, state: &mut H)
+//     where
+//         H: Hasher;
 
-        Ok(item)
+//     fn hash_slice<H>(data: &[Self], state: &mut H)
+//     where
+//         H: Hasher,
+//     { ... }
+// }
+
+impl FromStr for Blob {
+    type Err = Error;
+    fn from_str(s: &str) -> Result<Blob, Self::Err> {
+        let blob = serde_json::from_str::<Blob>(s)?;
+
+        Ok(blob)
     }
 }
 
-impl Serialize for Item {
+impl Serialize for Blob {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -111,7 +131,7 @@ impl Serialize for Item {
 //     type Value = Canonical;
 
 //     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-//         formatter.write_str("Expecting an item-like structure.")
+//         formatter.write_str("Expecting an blob-like structure.")
 //     }
 
 //     fn visit_map<M>(self, mut access: M) -> Result<Self::Value, M::Error>

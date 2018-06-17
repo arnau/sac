@@ -16,29 +16,87 @@ You should always expect an exit code of \f[C]0\f[] when the command
 succeeds.
 Failure codes are being designed so in the meantime all of them are
 \f[C]1\f[].
-.SS Items
+.SS Types
+.PP
+The following data types can be used to represent values:
 .IP \[bu] 2
-\f[C]item\ canon\f[] \- Takes an item and transforms it into its
+\f[B]bool\f[] \[em] Boolean (e.g.
+\f[C]true\f[], \f[C]false\f[]).
+.IP \[bu] 2
+\f[B]curie\f[] \[em] Curie (e.g.
+\f[C]example:foo\f[]).
+.IP \[bu] 2
+\f[B]datetime\f[] \[em] UTC ISO8601 date time in any multiple accuracies
+(e.g.
+\f[C]2018\f[], \f[C]2016\-10\-11T12:13:14Z\f[]).
+.IP \[bu] 2
+\f[B]hash\f[] \[em] Qualified hash (with algorithm) (e.g.
+\f[C]sha\-256:ecd26bd54edf231ecbfbe361c97e0f720068f562e26c32696e777b6ed494cf73\f[]).
+.IP \[bu] 2
+\f[B]inapplicable\f[] \[em] Inapplicable value (e.g.
+\f[C]N/A\f[]).
+.IP \[bu] 2
+\f[B]integer\f[] \[em] Signed integer (e.g.
+\f[C]3\f[], \f[C]\-10\f[]).
+.IP \[bu] 2
+\f[B]period\f[] \[em] ISO8601 period in any multiple forms and
+accuracies (e.g.
+\f[C]P1Y2M\f[], \f[C]PT10H\f[]).
+.IP \[bu] 2
+\f[B]point\f[] \[em] WKT point as defined by OGC 06\-104r4 (OpenGIS®
+Implementation Standard for Geographic information \- Simple feature
+access \- Part 2: SQL Option) (e.g.
+\f[C]POINT\ (10\ 25)\f[]).
+.IP \[bu] 2
+\f[B]polygon\f[] \[em] WKT polygon as defined by OGC 06\-104r4 (OpenGIS®
+Implementation Standard for Geographic information \- Simple feature
+access \- Part 2: SQL Option) (e.g.
+\f[C]POLYGONZ\ ((0\ 0\ 1,\ 1\ 1\ 1,\ 2\ 2\ 1))\f[]).
+.IP \[bu] 2
+\f[B]string\f[] \[em] UTF\-8 string.
+.IP \[bu] 2
+\f[B]text\f[] \[em] Common Markdown text.
+.IP \[bu] 2
+\f[B]timestamp\f[] \[em] RFC3339 UTC timestamp (e.g.
+\f[C]2018\-06\-07T08:09:10Z\f[]).
+.IP \[bu] 2
+\f[B]url\f[] \[em] Url (e.g.
+\f[C]https://example.org/foo\f[]).
+.SS Blobs
+.IP \[bu] 2
+\f[C]blob\ canon\f[] \- Takes a blob and transforms it into its
 canonical form.
 .IP \[bu] 2
-\f[C]item\ hash\f[] \- Takes an item and generates its hash.
+\f[C]blob\ hash\f[] \- Takes an blob and generates its hash.
+.SS Values
+.IP \[bu] 2
+\f[C]value\ check\ \-\-type\ <type>\f[] \- Checks a value againt a type.
 .SH EXAMPLES
 .PP
-Canonicalise an item:
+Canonicalise a blob:
 .IP
 .nf
 \f[C]
-$\ sac\ item\ canon\ \[aq]{"foo":\ "abc",\ "bar":\ "xyz"}\[aq]
+$\ sac\ blob\ canon\ \[aq]{"foo":\ "abc",\ "bar":\ "xyz"}\[aq]
 {"bar":"xyz","foo":"abc"}
 \f[]
 .fi
 .PP
-Hash an item:
+Hash a blob:
 .IP
 .nf
 \f[C]
-$\ sac\ item\ hash\ \[aq]{"bar":"xyz","foo":"abc"}\[aq]
+$\ sac\ blob\ hash\ \[aq]{"bar":"xyz","foo":"abc"}\[aq]
 5dd4fe3b0de91882dae86b223ca531b5c8f2335d9ee3fd0ab18dfdc2871d0c61
+\f[]
+.fi
+.PP
+Check a URL:
+.IP
+.nf
+\f[C]
+$\ sac\ value\ check\ \-\-type\ url\ https://example.org/
+The\ value\ https://example.org/\ is\ a\ valid\ Url
 \f[]
 .fi
 .SH AUTHOR
