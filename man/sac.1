@@ -16,6 +16,52 @@ You should always expect an exit code of \f[C]0\f[] when the command
 succeeds.
 Failure codes are being designed so in the meantime all of them are
 \f[C]1\f[].
+.SS Types
+.PP
+The following data types can be used to represent values:
+.IP \[bu] 2
+\f[B]bool\f[] \[em] Boolean (e.g.
+\f[C]true\f[], \f[C]false\f[]).
+.IP \[bu] 2
+\f[B]curie\f[] \[em] Curie (e.g.
+\f[C]example:foo\f[]).
+.IP \[bu] 2
+\f[B]datetime\f[] \[em] UTC ISO8601 date time in any multiple accuracies
+(e.g.
+\f[C]2018\f[], \f[C]2016\-10\-11T12:13:14Z\f[]).
+.IP \[bu] 2
+\f[B]hash\f[] \[em] Qualified hash (with algorithm) (e.g.
+\f[C]sha\-256:ecd26bd54edf231ecbfbe361c97e0f720068f562e26c32696e777b6ed494cf73\f[]).
+.IP \[bu] 2
+\f[B]inapplicable\f[] \[em] Inapplicable value (e.g.
+\f[C]N/A\f[]).
+.IP \[bu] 2
+\f[B]integer\f[] \[em] Signed integer (e.g.
+\f[C]3\f[], \f[C]\-10\f[]).
+.IP \[bu] 2
+\f[B]period\f[] \[em] ISO8601 period in any multiple forms and
+accuracies (e.g.
+\f[C]P1Y2M\f[], \f[C]PT10H\f[]).
+.IP \[bu] 2
+\f[B]point\f[] \[em] WKT point as defined by OGC 06\-104r4 (OpenGIS®
+Implementation Standard for Geographic information \- Simple feature
+access \- Part 2: SQL Option) (e.g.
+\f[C]POINT\ (10\ 25)\f[]).
+.IP \[bu] 2
+\f[B]polygon\f[] \[em] WKT polygon as defined by OGC 06\-104r4 (OpenGIS®
+Implementation Standard for Geographic information \- Simple feature
+access \- Part 2: SQL Option) (e.g.
+\f[C]POLYGONZ\ ((0\ 0\ 1,\ 1\ 1\ 1,\ 2\ 2\ 1))\f[]).
+.IP \[bu] 2
+\f[B]string\f[] \[em] UTF\-8 string.
+.IP \[bu] 2
+\f[B]text\f[] \[em] Common Markdown text.
+.IP \[bu] 2
+\f[B]timestamp\f[] \[em] RFC3339 UTC timestamp (e.g.
+\f[C]2018\-06\-07T08:09:10Z\f[]).
+.IP \[bu] 2
+\f[B]url\f[] \[em] Url (e.g.
+\f[C]https://example.org/foo\f[]).
 .SS Blobs
 .IP \[bu] 2
 \f[C]blob\ canon\f[] \- Takes a blob and transforms it into its
