@@ -28,11 +28,13 @@ extern crate serde_derive;
 
 extern crate serde_json;
 
+extern crate toml;
+
 extern crate url;
 
-pub mod digest;
-
 pub mod blob;
-pub mod kind;
-pub mod value;
+pub mod digest;
 pub mod field;
+pub mod kind;
+pub mod schema;
+pub mod value;
