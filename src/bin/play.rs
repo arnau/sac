@@ -21,25 +21,17 @@ fn main() {
         println!("{:?}", field);
     }
 
-    println!("\n\n{:?}", schema.primary_field());
+    println!("\n\n{:?}", schema.primary_key());
 
     // Schema plan
 
-    let field = Field {
-        id: "country".to_string(),
-        datatype: Datatype::One(Primitive::String),
-        label: Some("ID".to_string()),
-        description: None,
-        unique: true,
-        required: true,
-    };
+    let key = Key::new("id", Some("ID"), None);
 
     let planned_schema: Result<Schema, SchemaError> = Plan::new("country")
         .with_label("Country")
         .with_description("Lorem ipsum")
         .with_custodian("Bob <b@b.b>")
-        .with_fields(vec![field])
-        .with_primary_key("country")
+        .with_primary_key(key)
         .validate();
 
     println!("\n\n{:?}", planned_schema);

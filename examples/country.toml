@@ -2,16 +2,11 @@ id = "country"
 label = "Country"
 description = "British English-language names and descriptive terms for countries."
 custodian = "Foreign & Commonwealth Office"
-primary-key = "country"
 
-[[fields]]
+[primary-key]
 id = "country"
-type = "string"
-cardinality = "1"
 label = "Country"
 description = "The country's 2-letter ISO 3166-2 alpha2 code."
-unique = true
-required = true # TODO: Implicit because primary-key?
 
 [[fields]]
 id = "name"

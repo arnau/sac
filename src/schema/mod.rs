@@ -1,3 +1,4 @@
+use serde::de::{self, Deserialize, Deserializer, MapAccess, Visitor};
 use std::fmt::{self, Display};
 use std::fs::File;
 use std::io;
@@ -164,8 +165,6 @@ pub struct Field {
     pub required: bool,
 }
 
-use serde::de::{self, Deserialize, Deserializer, MapAccess, Visitor};
-
 impl<'de> Deserialize<'de> for Field {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -173,7 +172,7 @@ impl<'de> Deserialize<'de> for Field {
     {
         #[derive(Deserialize)]
         #[serde(field_identifier, rename_all = "lowercase")]
-        enum Key {
+        enum Attr {
             Id,
             Type,
             Cardinality,
@@ -206,13 +205,13 @@ impl<'de> Deserialize<'de> for Field {
 
                 while let Some(key) = map.next_key()? {
                     match key {
-                        Key::Id => {
+                        Attr::Id => {
                             if id.is_some() {
                                 return Err(de::Error::duplicate_field("id"));
                             }
                             id = Some(map.next_value()?);
                         }
-                        Key::Type => {
+                        Attr::Type => {
                             if primitive.is_some() {
                                 return Err(de::Error::duplicate_field("type"));
                             }
@@ -224,31 +223,31 @@ impl<'de> Deserialize<'de> for Field {
                             };
                             primitive = value.ok();
                         }
-                        Key::Cardinality => {
+                        Attr::Cardinality => {
                             if cardinality.is_some() {
                                 return Err(de::Error::duplicate_field("cardinality"));
                             }
                             cardinality = Some(map.next_value()?);
                         }
-                        Key::Label => {
+                        Attr::Label => {
                             if label.is_some() {
                                 return Err(de::Error::duplicate_field("label"));
                             }
                             label = Some(map.next_value()?);
                         }
-                        Key::Description => {
+                        Attr::Description => {
                             if description.is_some() {
                                 return Err(de::Error::duplicate_field("description"));
                             }
                             description = Some(map.next_value()?);
                         }
-                        Key::Unique => {
+                        Attr::Unique => {
                             if unique.is_some() {
                                 return Err(de::Error::duplicate_field("unique"));
                             }
                             unique = Some(map.next_value()?);
                         }
-                        Key::Required => {
+                        Attr::Required => {
                             if required.is_some() {
                                 return Err(de::Error::duplicate_field("required"));
                             }
@@ -293,6 +292,93 @@ impl<'de> Deserialize<'de> for Field {
     }
 }
 
+/// Primary key (or field)
+///
+/// Similar to a Field but datatype is imposed.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Key {
+    id: String,
+    datatype: Datatype,
+    label: Option<String>,
+    description: Option<String>,
+}
+impl<'de> Deserialize<'de> for Key {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        #[derive(Deserialize)]
+        #[serde(field_identifier, rename_all = "lowercase")]
+        enum Attr {
+            Id,
+            Label,
+            Description,
+        }
+
+        struct KeyVisitor;
+
+        impl<'de> Visitor<'de> for KeyVisitor {
+            type Value = Key;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                formatter.write_str("Expecting a Key struct.")
+            }
+
+            fn visit_map<M>(self, mut map: M) -> Result<Self::Value, M::Error>
+            where
+                M: MapAccess<'de>,
+            {
+                let mut id = None;
+                let mut label = None;
+                let mut description = None;
+
+                while let Some(key) = map.next_key()? {
+                    match key {
+                        Attr::Id => {
+                            if id.is_some() {
+                                return Err(de::Error::duplicate_field("id"));
+                            }
+                            id = Some(map.next_value()?);
+                        }
+                        Attr::Label => {
+                            if label.is_some() {
+                                return Err(de::Error::duplicate_field("label"));
+                            }
+                            label = Some(map.next_value()?);
+                        }
+                        Attr::Description => {
+                            if description.is_some() {
+                                return Err(de::Error::duplicate_field("description"));
+                            }
+                            description = Some(map.next_value()?);
+                        }
+                    }
+                }
+
+                Ok(Key::new(
+                    id.ok_or(de::Error::missing_field("id"))?,
+                    label,
+                    description,
+                ))
+            }
+        }
+
+        const ATTRS: &'static [&'static str] = &["id", "label", "description"];
+        deserializer.deserialize_struct("Duration", ATTRS, KeyVisitor)
+    }
+}
+
+impl Key {
+    pub fn new(id: &str, label: Option<&str>, description: Option<&str>) -> Self {
+        Key {
+            id: id.to_string(),
+            datatype: Datatype::One(Primitive::String),
+            label: label.map(|s| s.into()),
+            description: description.map(|s| s.into()),
+        }
+    }
+}
+
 #[derive(Debug, Fail)]
 pub enum SchemaError {
     #[fail(display = "Invalid schema.")]
@@ -317,47 +403,33 @@ impl From<toml::de::Error> for SchemaError {
     }
 }
 
-/// Schema
+/// Plan
 ///
-/// ```text
-/// // TODO:
+/// ```
 /// use sac::schema::*;
-/// // country:string:ur
+///
+/// let key = Key::new("id", Some("ID"), None);
 /// let field = Field {
-///      id: "country".to_string(),
-///      datatype: Datatype::One(Primitive::String),
-///      label: Some("ID".to_string()),
-///      description: None,
-///      unique: true,
-///      required: true,
+///     id: "start-date".to_string(),
+///     datatype: Datatype::One(Primitive::Datetime),
+///     label: None,
+///     description: None,
+///     required: false,
+///     unique: false,
 /// };
-///
-/// let schema: Result<Schema, SchemaError> =
-///     // alt: Plan::new("country", Datatype::One(Primitive::String))
-///     Plan::new()
-///         .with_id("country")
-///         .with_datatype(Datatype::One(Primitive::String))
-///         .with_label("Country")
-///         .with_description("Lorem ipsum")
-///         .with_custodian("Bob <b@b.b>")
-///         .with_fields(vec![field])
-///         .with_primary_key("country")
-///         .schema(); //-- checks primary key exists.
-///
-/// let schema_2 = Schema::new(
-///     "country",                          // id
-///     Datatype::One(Primitive::String),   // datatype
-///     Some("Country"),                    // label
-///     Some("Lorem ipsum"),                // description
-///     Some("Bob <b@b.b>"),                // custodian
-///     vec![field],                        // fields
-///     "country");                         // primary key. checks that it exists.
+/// let planned_schema: Result<Schema, SchemaError> = Plan::new("country")
+///     .with_primary_key(key)
+///     .with_label("Country")
+///     .with_description("Lorem ipsum")
+///     .with_custodian("Bob <b@b.b>")
+///     .with_field(field)
+///     .validate();
 /// ```
 #[derive(Debug, Clone, PartialEq, Deserialize)]
 pub struct Plan {
     id: String,
     #[serde(rename = "primary-key")]
-    primary_key: Option<String>,
+    primary_key: Option<Key>,
     label: Option<String>,
     description: Option<String>,
     custodian: Option<String>,
@@ -401,17 +473,13 @@ impl Plan {
         self
     }
 
-    pub fn with_primary_key<'a>(&'a mut self, pk: &str) -> &'a mut Plan {
-        self.primary_key = Some(pk.to_string());
+    pub fn with_primary_key<'a>(&'a mut self, key: Key) -> &'a mut Plan {
+        self.primary_key = Some(key);
         self
     }
 
     pub fn validate(&self) -> Result<Schema, SchemaError> {
-        if self.fields.len() == 0 {
-            return Err(SchemaError::MissingFields);
-        }
-
-        let sch = Schema {
+        Ok(Schema {
             id: self.id.clone(),
             primary_key: self.primary_key
                 .clone()
@@ -420,15 +488,7 @@ impl Plan {
             description: self.description.clone(),
             custodian: self.custodian.clone(),
             fields: self.fields.clone(),
-        };
-
-        let primary_field = self.fields.iter().find(|&x| x.id == sch.primary_key);
-
-        if primary_field.is_none() {
-            return Err(SchemaError::MissingPrimaryKey);
-        }
-
-        Ok(sch)
+        })
     }
 }
 
@@ -436,7 +496,7 @@ impl Plan {
 pub struct Schema {
     id: String,
     #[serde(rename = "primary-key")]
-    primary_key: String,
+    primary_key: Key,
     label: Option<String>,
     description: Option<String>,
     custodian: Option<String>,
@@ -460,13 +520,8 @@ impl Schema {
         &self.fields
     }
 
-    // TODO: Primary key must exist in fields. What's the best place to enforce
-    // this? At least Deserialiser should guarantee this.
-    pub fn primary_field(&self) -> &Field {
-        &self.fields
-            .iter()
-            .find(|&x| x.id == self.primary_key)
-            .unwrap()
+    pub fn primary_key(&self) -> &Key {
+        &self.primary_key
     }
 }
 
@@ -480,31 +535,32 @@ mod tests {
             id = "DB68BB24-8FCB-4172-A74A-84C6225CCABF"
             label = "Foo"
             custodian = "Me"
-            primary-key = "id"
+            primary-key = { id = "id", label = "ID" }
+
             [[fields]]
-            id = "id"
+            id = "name"
             type = "string"
             cardinality = "1"
-            label = "ID"
+            label = "Name"
         "#;
 
-        let actual = Schema::from_toml(toml).ok();
+        let actual = Schema::from_toml(toml);
         let expected = Schema {
             id: "DB68BB24-8FCB-4172-A74A-84C6225CCABF".to_string(),
             description: None,
             label: Some("Foo".to_string()),
             custodian: Some("Me".to_string()),
-            primary_key: "id".to_string(),
+            primary_key: Key::new("id", Some("ID"), None),
             fields: vec![Field {
-                id: "id".to_string(),
+                id: "name".to_string(),
                 datatype: Datatype::One(Primitive::String),
-                label: Some("ID".to_string()),
+                label: Some("Name".to_string()),
                 description: None,
                 required: false,
                 unique: false,
             }],
         };
 
-        assert_eq!(actual, Some(expected));
+        assert_eq!(actual.ok(), Some(expected));
     }
 }
