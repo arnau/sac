@@ -1,0 +1,41 @@
+{
+    "core": {
+        "id": "country",
+        "name": "Country",
+        "description": "British English-language names and descriptive terms for countries",
+        "authors": ["Foreign & Commonwealth Office"]
+    },
+    "schema": {
+        "id": {
+            "description": "The country's 2-letter ISO 3166-2 alpha2 code."
+        },
+        "name": {
+            "type": "string",
+            "cardinality": "1",
+            "description": "The common country name."
+        },
+        "official-name": {
+            "type": "string",
+            "cardinality": "1",
+            "description": "The official country name."
+        },
+        "citizen-names": {
+            "type": "string",
+            "cardinality": "n",
+            "description": "The names of a country's citizen."
+
+        },
+        "start-date": {
+            "type": "datetime",
+            "cardinality": "1",
+            "description": "The date the country was created."
+
+        },
+        "end-date": {
+            "type": "datetime",
+            "cardinality": "1",
+            "description": "The date the country was ended."
+
+        }
+    }
+}

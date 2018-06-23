@@ -1,0 +1,50 @@
+id = "country"
+label = "Country"
+description = "British English-language names and descriptive terms for countries."
+custodian = "Foreign & Commonwealth Office"
+primary-key = "country"
+
+[[fields]]
+id = "country"
+type = "string"
+cardinality = "1"
+label = "Country"
+description = "The country's 2-letter ISO 3166-2 alpha2 code."
+unique = true
+required = true # TODO: Implicit because primary-key?
+
+[[fields]]
+id = "name"
+type = "string"
+cardinality = "1"
+label = "Name"
+description = "The common country name."
+
+[[fields]]
+id = "official-name"
+type = "string"
+cardinality = "1"
+label = "Official name"
+description = "The official country name."
+
+[[fields]]
+id = "citizen-names"
+# type = "[string]"
+type = "string"
+cardinality = "n"
+label = "Citizen names"
+description = "The names of a country's citizen."
+
+[[fields]]
+id = "start-date"
+type = "datetime"
+cardinality = "1"
+label = "Start date"
+description = "The date the country was created."
+
+[[fields]]
+id = "end-date"
+type = "datetime"
+cardinality = "1"
+label = "End date"
+description = "The date the country was ended."
