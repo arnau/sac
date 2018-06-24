@@ -9,7 +9,7 @@ use std::fmt;
 
 use super::datatype::{Datatype, Primitive, PRIMITIVES};
 
-/// Representa a schema field to validate in a blob of data.
+/// Represents a schema attribute to validate in a blob of data.
 ///
 /// ## Example
 ///
@@ -17,14 +17,14 @@ use super::datatype::{Datatype, Primitive, PRIMITIVES};
 /// use sac::schema::*;
 ///
 /// // start-date:datetime
-/// let start_date = Field::new(
+/// let start_date = Attribute::new(
 ///      "start-date".to_string(),
 ///      Datatype::One(Primitive::Datetime),
 ///      None,
 ///      None,
 /// );
 /// // citizen-names:[string]
-/// let citizen_names = Field::new(
+/// let citizen_names = Attribute::new(
 ///     "citizen-names".to_string(),
 ///     Datatype::Many(Primitive::String),
 ///     Some("Citizen names".to_string()),
@@ -32,21 +32,21 @@ use super::datatype::{Datatype, Primitive, PRIMITIVES};
 /// );
 /// ```
 #[derive(Debug, Clone, PartialEq)]
-pub struct Field {
+pub struct Attribute {
     id: String,
     datatype: Datatype,
     label: Option<String>,
     description: Option<String>,
 }
 
-impl Field {
+impl Attribute {
     pub fn new(
         id: String,
         datatype: Datatype,
         label: Option<String>,
         description: Option<String>,
     ) -> Self {
-        Field {
+        Attribute {
             id,
             datatype,
             label,
@@ -55,14 +55,14 @@ impl Field {
     }
 }
 
-impl<'de> Deserialize<'de> for Field {
+impl<'de> Deserialize<'de> for Attribute {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
         #[derive(Deserialize)]
         #[serde(field_identifier, rename_all = "lowercase")]
-        enum Attr {
+        enum Tag {
             Id,
             Type,
             Cardinality,
@@ -70,13 +70,13 @@ impl<'de> Deserialize<'de> for Field {
             Description,
         }
 
-        struct FieldVisitor;
+        struct AttributeVisitor;
 
-        impl<'de> Visitor<'de> for FieldVisitor {
-            type Value = Field;
+        impl<'de> Visitor<'de> for AttributeVisitor {
+            type Value = Attribute;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-                formatter.write_str("Expecting a Field struct.")
+                formatter.write_str("Expecting an Attribute.")
             }
 
             fn visit_map<M>(self, mut map: M) -> Result<Self::Value, M::Error>
@@ -91,13 +91,13 @@ impl<'de> Deserialize<'de> for Field {
 
                 while let Some(key) = map.next_key()? {
                     match key {
-                        Attr::Id => {
+                        Tag::Id => {
                             if id.is_some() {
                                 return Err(de::Error::duplicate_field("id"));
                             }
                             id = Some(map.next_value()?);
                         }
-                        Attr::Type => {
+                        Tag::Type => {
                             if primitive.is_some() {
                                 return Err(de::Error::duplicate_field("type"));
                             }
@@ -109,19 +109,19 @@ impl<'de> Deserialize<'de> for Field {
                             };
                             primitive = value.ok();
                         }
-                        Attr::Cardinality => {
+                        Tag::Cardinality => {
                             if cardinality.is_some() {
                                 return Err(de::Error::duplicate_field("cardinality"));
                             }
                             cardinality = Some(map.next_value()?);
                         }
-                        Attr::Label => {
+                        Tag::Label => {
                             if label.is_some() {
                                 return Err(de::Error::duplicate_field("label"));
                             }
                             label = Some(map.next_value()?);
                         }
-                        Attr::Description => {
+                        Tag::Description => {
                             if description.is_some() {
                                 return Err(de::Error::duplicate_field("description"));
                             }
@@ -141,7 +141,7 @@ impl<'de> Deserialize<'de> for Field {
                     None => return Err(de::Error::missing_field("cardinality")),
                 };
 
-                Ok(Field::new(
+                Ok(Attribute::new(
                     id.ok_or(de::Error::missing_field("id"))?,
                     datatype,
                     label,
@@ -150,8 +150,8 @@ impl<'de> Deserialize<'de> for Field {
             }
         }
 
-        const ATTRS: &'static [&'static str] =
+        const TAGS: &'static [&'static str] =
             &["id", "type", "cardinality", "label", "description"];
-        deserializer.deserialize_struct("Field", ATTRS, FieldVisitor)
+        deserializer.deserialize_struct("Field", TAGS, AttributeVisitor)
     }
 }

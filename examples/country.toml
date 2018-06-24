@@ -8,35 +8,35 @@ id = "country"
 label = "Country"
 description = "The country's 2-letter ISO 3166-2 alpha2 code."
 
-[[fields]]
+[[attributes]]
 id = "name"
 type = "string"
 cardinality = "1"
 label = "Name"
 description = "The common country name."
 
-[[fields]]
+[[attributes]]
 id = "official-name"
 type = "string"
 cardinality = "1"
 label = "Official name"
 description = "The official country name."
 
-[[fields]]
+[[attributes]]
 id = "citizen-names"
 type = "string"
 cardinality = "n"
 label = "Citizen names"
 description = "The names of a country's citizen."
 
-[[fields]]
+[[attributes]]
 id = "start-date"
 type = "datetime"
 cardinality = "1"
 label = "Start date"
 description = "The date the country was created."
 
-[[fields]]
+[[attributes]]
 id = "end-date"
 type = "datetime"
 cardinality = "1"

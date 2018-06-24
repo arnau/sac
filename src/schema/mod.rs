@@ -10,12 +10,12 @@ use std::io::prelude::*;
 use std::path::Path;
 use toml;
 
+mod attribute;
 mod datatype;
-mod field;
 mod key;
 
+pub use self::attribute::Attribute;
 pub use self::datatype::{Datatype, Primitive, PRIMITIVES};
-pub use self::field::Field;
 pub use self::key::Key;
 
 #[derive(Debug, Fail)]
@@ -26,8 +26,8 @@ pub enum SchemaError {
     IoError(#[cause] io::Error),
     #[fail(display = "Missing primary key.")]
     MissingPrimaryKey,
-    #[fail(display = "A schema needs at least one field.")]
-    MissingFields,
+    #[fail(display = "A schema needs at least one attribute.")]
+    MissingAttributes,
 }
 
 impl From<io::Error> for SchemaError {
@@ -48,7 +48,7 @@ impl From<toml::de::Error> for SchemaError {
 /// use sac::schema::*;
 ///
 /// let key = Key::new("id", Some("ID"), None);
-/// let start_date = Field::new(
+/// let start_date = Attribute::new(
 ///     "start-date".to_string(),
 ///     Datatype::One(Primitive::Datetime),
 ///     None,
@@ -59,7 +59,7 @@ impl From<toml::de::Error> for SchemaError {
 ///     .with_label("Country")
 ///     .with_description("Lorem ipsum")
 ///     .with_custodian("Bob <b@b.b>")
-///     .with_field(start_date)
+///     .with_attribute(start_date)
 ///     .validate();
 /// ```
 #[derive(Debug, Clone, PartialEq, Deserialize)]
@@ -70,7 +70,7 @@ pub struct Plan {
     label: Option<String>,
     description: Option<String>,
     custodian: Option<String>,
-    fields: Vec<Field>,
+    attributes: Vec<Attribute>,
 }
 
 impl Plan {
@@ -81,7 +81,7 @@ impl Plan {
             label: None,
             description: None,
             custodian: None,
-            fields: Vec::new(),
+            attributes: Vec::new(),
         }
     }
 
@@ -100,13 +100,13 @@ impl Plan {
         self
     }
 
-    pub fn with_fields<'a>(&'a mut self, fields: Vec<Field>) -> &'a mut Plan {
-        self.fields = fields;
+    pub fn with_attributes<'a>(&'a mut self, attrs: Vec<Attribute>) -> &'a mut Plan {
+        self.attributes = attrs;
         self
     }
 
-    pub fn with_field<'a>(&'a mut self, field: Field) -> &'a mut Plan {
-        self.fields.push(field);
+    pub fn with_attribute<'a>(&'a mut self, attr: Attribute) -> &'a mut Plan {
+        self.attributes.push(attr);
         self
     }
 
@@ -124,7 +124,7 @@ impl Plan {
             label: self.label.clone(),
             description: self.description.clone(),
             custodian: self.custodian.clone(),
-            fields: self.fields.clone(),
+            attributes: self.attributes.clone(),
         })
     }
 }
@@ -137,7 +137,7 @@ pub struct Schema {
     label: Option<String>,
     description: Option<String>,
     custodian: Option<String>,
-    fields: Vec<Field>,
+    attributes: Vec<Attribute>,
 }
 
 impl Schema {
@@ -153,8 +153,8 @@ impl Schema {
         toml::from_str::<Schema>(&raw).map_err(|err| SchemaError::ParseError(err))
     }
 
-    pub fn fields(&self) -> &[Field] {
-        &self.fields
+    pub fn fields(&self) -> &[Attribute] {
+        &self.attributes
     }
 
     pub fn primary_key(&self) -> &Key {
@@ -174,7 +174,7 @@ mod tests {
             custodian = "Me"
             primary-key = { id = "id", label = "ID" }
 
-            [[fields]]
+            [[attributes]]
             id = "name"
             type = "string"
             cardinality = "1"
@@ -188,7 +188,7 @@ mod tests {
             label: Some("Foo".to_string()),
             custodian: Some("Me".to_string()),
             primary_key: Key::new("id", Some("ID"), None),
-            fields: vec![Field::new(
+            attributes: vec![Attribute::new(
                 "name".to_string(),
                 Datatype::One(Primitive::String),
                 Some("Name".to_string()),
