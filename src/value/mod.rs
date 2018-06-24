@@ -32,7 +32,7 @@ use self::polygon::{Polygon, PolygonError};
 use self::text::{Text, TextError};
 use self::timestamp::{Timestamp, TimestampError};
 use self::url::{Url, UrlError};
-use kind::Kind;
+use super::schema::Primitive;
 
 /// Represents a validation error for item values. Ranges from parsing issues
 /// to type checks.
@@ -202,25 +202,25 @@ impl Default for Value {
 }
 
 impl Value {
-    pub fn parse(s: &str, kind: Kind) -> Result<Self, ValueError> {
-        match kind {
-            Kind::Bool => {
+    pub fn parse(s: &str, primitive: &Primitive) -> Result<Self, ValueError> {
+        match primitive {
+            Primitive::Bool => {
                 let b = s.parse::<bool>()?;
                 Ok(Value::Bool(b))
             }
-            Kind::Curie => {
+            Primitive::Curie => {
                 let c = Curie::parse(s)?;
                 Ok(Value::Curie(c))
             }
-            Kind::Datetime => {
+            Primitive::Datetime => {
                 let d = Datetime::parse(s)?;
                 Ok(Value::Datetime(d))
             }
-            Kind::Hash => {
+            Primitive::Hash => {
                 let hash = Hash::parse(s)?;
                 Ok(Value::Hash(hash))
             }
-            Kind::Inapplicable => {
+            Primitive::Inapplicable => {
                 let s = s.to_lowercase();
                 if s == "na" || s == "n/a" {
                     Ok(Value::Inapplicable)
@@ -228,33 +228,32 @@ impl Value {
                     Err(ValueError::InvalidInapplicable)
                 }
             }
-            Kind::Integer => {
+            Primitive::Integer => {
                 let i = s.parse::<i64>()?;
                 Ok(Value::Integer(Integer(i)))
             }
-            // Kind::List(Box<Kind>),
-            Kind::Period => {
+            Primitive::Period => {
                 let p = Period::parse(s)?;
                 Ok(Value::Period(p))
             }
-            Kind::Point => {
+            Primitive::Point => {
                 let p = Point::parse(s)?;
                 Ok(Value::Point(p))
             }
-            Kind::Polygon => {
+            Primitive::Polygon => {
                 let p = Polygon::parse(s)?;
                 Ok(Value::Polygon(p))
             }
-            Kind::String => Ok(Value::String(s.to_owned())),
-            Kind::Text => {
+            Primitive::String => Ok(Value::String(s.to_owned())),
+            Primitive::Text => {
                 let text = Text::parse(s)?;
                 Ok(Value::Text(text))
             }
-            Kind::Timestamp => {
+            Primitive::Timestamp => {
                 let t = Timestamp::parse(s)?;
                 Ok(Value::Timestamp(t))
             }
-            Kind::Unknown => {
+            Primitive::Unknown => {
                 let s = s.to_lowercase();
                 if s == "null" {
                     Ok(Value::Unknown)
@@ -262,12 +261,11 @@ impl Value {
                     Err(ValueError::InvalidUnknown)
                 }
             }
-            Kind::Untyped => Ok(Value::Untyped(s.to_owned())),
-            Kind::Url => {
+            Primitive::Untyped => Ok(Value::Untyped(s.to_owned())),
+            Primitive::Url => {
                 let url = Url::parse(s)?;
                 Ok(Value::Url(url))
             }
-            _ => Ok(Value::Untyped(s.to_owned())),
         }
     }
 }
@@ -340,13 +338,13 @@ impl From<PolygonError> for ValueError {
 
 #[cfg(test)]
 mod tests {
-    use super::super::kind::Kind;
+    use super::super::schema::Primitive;
     use super::*;
 
     #[test]
     fn parse_bool() {
         let expected = r#"Ok(Bool(true))"#.to_string();
-        let actual = Value::parse("true", Kind::Bool);
+        let actual = Value::parse("true", &Primitive::Bool);
 
         assert_eq!(format!("{:?}", actual), expected);
     }
@@ -354,7 +352,7 @@ mod tests {
     #[test]
     fn parse_integer() {
         let expected = r#"Ok(Integer(0))"#.to_string();
-        let actual = Value::parse("0", Kind::Integer);
+        let actual = Value::parse("0", &Primitive::Integer);
 
         assert_eq!(format!("{:?}", actual), expected);
     }
@@ -362,7 +360,7 @@ mod tests {
     #[test]
     fn parse_url() {
         let expected = r#"Ok(Url("https://example.org/"))"#.to_string();
-        let actual = Value::parse("https://example.org", Kind::Url);
+        let actual = Value::parse("https://example.org", &Primitive::Url);
 
         assert_eq!(format!("{:?}", actual), expected);
     }
@@ -370,7 +368,7 @@ mod tests {
     #[test]
     fn parse_text() {
         let expected = r#"Ok(Text("foo *bar*"))"#.to_string();
-        let actual = Value::parse("foo *bar*", Kind::Text);
+        let actual = Value::parse("foo *bar*", &Primitive::Text);
 
         assert_eq!(format!("{:?}", actual), expected);
     }

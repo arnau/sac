@@ -17,7 +17,7 @@ use std::process;
 
 use clap::{App, Arg, SubCommand};
 
-use sac::kind::Kind;
+use sac::schema::{Primitive, PRIMITIVES};
 
 fn main() {
     let matches = App::new(crate_name!())
@@ -73,23 +73,7 @@ fn main() {
                                 .short("t")
                                 .takes_value(true)
                                 .required(true)
-                                .possible_values(&[
-                                    "bool",
-                                    "curie",
-                                    "datetime",
-                                    "hash",
-                                    "inapplicable",
-                                    "integer",
-                                    "period",
-                                    "point",
-                                    "polygon",
-                                    "string",
-                                    "text",
-                                    "timestamp",
-                                    "unknown",
-                                    "untyped",
-                                    "url",
-                                ]),
+                                .possible_values(PRIMITIVES),
                         ),
                 ),
         )
@@ -126,10 +110,10 @@ fn main() {
         ("value", Some(value_matches)) => match value_matches.subcommand() {
             ("check", Some(sub_matches)) => {
                 let raw = sub_matches.value_of("input").unwrap();
-                let kind = value_t!(sub_matches, "type", Kind).unwrap();
+                let primitive = value_t!(sub_matches, "type", Primitive).unwrap();
 
-                match commands::value::check(raw, kind.clone()) {
-                    Ok(v) => println!("The value {} is a valid {}", v, kind),
+                match commands::value::check(raw, &primitive) {
+                    Ok(v) => println!("The value {} is a valid {}", v, primitive),
                     Err(err) => {
                         eprintln!("{}", err);
                         process::exit(1)
