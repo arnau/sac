@@ -40,7 +40,7 @@ check if a value conforms with a given datatype:
 sac value check --type <type>
 ```
 
-### types
+### Types
 
 * [x] `bool` — Boolean (true / false).
 * [x] `curie` — Curie.
@@ -56,6 +56,10 @@ sac value check --type <type>
 * [x] `timestamp` — RFC3339 UTC timestamp.
 * [x] `url` — Url.
 
+### Schema
+
+* [ ] `sac schema check <file>` — Checks a schema file is valid and well-formed.
+* [ ] `sac schema check --format <format> <file>` — Checks a schema file is valid and well-formed in the given format (e.g. TOML, JSON).
 
 ## CLI Design
 
