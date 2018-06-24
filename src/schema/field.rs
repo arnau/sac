@@ -3,6 +3,8 @@ use std::fmt;
 
 use super::datatype::{Datatype, Primitive, PRIMITIVES};
 
+/// Representa a schema field to validate in a blob of data.
+///
 /// ## Example
 ///
 /// ```
