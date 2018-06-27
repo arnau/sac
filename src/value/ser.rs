@@ -11,6 +11,9 @@ use super::Value;
 
 // TODO: Find a way to uppercase HEX here.
 // See https://docs.serde.rs/src/serde_json/ser.rs.html#1395-1415
+//
+// TODO: Decouple List from primitive values the same way Datatype and Primitive
+// do
 impl Serialize for Value {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -30,11 +33,17 @@ impl Serialize for Value {
             }
             Value::Bool(v) => serializer.serialize_bool(v),
             Value::Curie(ref v) => serializer.serialize_str(&v.to_string()),
+            Value::Datetime(ref v) => serializer.serialize_str(&v.to_string()),
             Value::Hash(ref v) => serializer.serialize_str(&v.to_string()),
             Value::Integer(ref v) => serializer.serialize_i64(v.0),
+            Value::Period(ref v) => serializer.serialize_str(&v.to_string()),
+            Value::Point(ref v) => serializer.serialize_str(&v.to_string()),
+            Value::Polygon(ref v) => serializer.serialize_str(&v.to_string()),
             Value::String(ref v) => serializer.serialize_str(v),
             Value::Text(ref v) => serializer.serialize_str(&v.to_string()),
+            Value::Timestamp(ref v) => serializer.serialize_str(&v.to_string()),
             Value::Url(ref v) => serializer.serialize_str(&v.to_string()),
+
             Value::List(ref xs) => {
                 use serde::ser::SerializeSeq;
                 let mut seq = serializer.serialize_seq(Some(xs.len()))?;
@@ -43,12 +52,6 @@ impl Serialize for Value {
                 }
                 seq.end()
             }
-            _ => unimplemented!(),
-            // Value::DateTime(ref v) => Debug::fmt(v, formatter),
-            // Value::Timestamp(ref v) => Debug::fmt(v, formatter),
-            // Value::Period(ref v) => Debug::fmt(v, formatter),
-            // Value::Point(ref v) => Debug::fmt(v, formatter),
-            // Value::Polygon(ref v) => Debug::fmt(v, formatter),
         }
     }
 }
