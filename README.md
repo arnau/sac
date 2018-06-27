@@ -61,7 +61,7 @@ sac value check --type <type>
 * [ ] `sac schema check <file>` — Checks a schema file is valid and well-formed.
 * [ ] `sac schema check --format <format> <file>` — Checks a schema file is valid and well-formed in the given format (e.g. TOML, JSON).
 
-* [ ] `sac init [--label <label>] <id>`
+* [ ] `sac init [--primary-key <key>] <id>`
 * [ ] `sac schema add <name> <value>`
     * [ ] `sac schema add description <description>`
     * [ ] `sac schema add label <value>`
