@@ -77,6 +77,20 @@ fn main() {
                         ),
                 ),
         )
+        .subcommand(
+            SubCommand::with_name("schema")
+                .about("Operate on the schema")
+                .subcommand(
+                    SubCommand::with_name("check")
+                        .about("Check if a schema is valid")
+                        .arg(
+                            Arg::with_name("file")
+                                .help("The schema to be checked")
+                                .required(true)
+                                .index(1),
+                        ),
+                ),
+        )
         .get_matches();
 
     match matches.subcommand() {
@@ -122,6 +136,21 @@ fn main() {
             }
             _ => process::exit(127),
         },
+        ("schema", Some(schema_matches)) => match schema_matches.subcommand() {
+            ("check", Some(sub_matches)) => {
+                let raw = sub_matches.value_of("file").unwrap();
+
+                match commands::schema::check(raw) {
+                    Ok(_) => println!("The schema {} is valid.", raw),
+                    Err(err) => {
+                        eprintln!("{}", err);
+                        process::exit(1)
+                    }
+                }
+            }
+            _ => process::exit(127),
+        },
+
         ("", None) => {
             println!("No subcommand was used");
             unimplemented!()

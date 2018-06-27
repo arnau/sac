@@ -4,10 +4,11 @@
 // at your option. This file may not be copied, modified, or distributed except
 // according to those terms.
 
+pub mod schema;
 pub mod value;
 
-use sac::{blob, digest};
 use failure::Error;
+use sac::{blob, digest};
 
 pub fn item_canon(raw: &str) -> Result<String, Error> {
     blob::from_json(raw).and_then(|blob| blob::to_json(&blob))

@@ -18,6 +18,32 @@ pub use self::attribute::Attribute;
 pub use self::datatype::{Datatype, Primitive, PRIMITIVES};
 pub use self::key::Key;
 
+// TODO:
+//
+// schema::diff(sch1, sch2)
+//      attribute::diff(attr1, attr2)
+//
+//
+//  Delta =
+//      [
+//          Add "label" "Foo",
+//          Add "description" "Foo bar",
+//          // Makes each addition atomic (values are always leafs)
+//          Add "attributes.name.label" "Name",
+//          Add "attributes.name.datatype" "string",
+//          Add "attributes.name.cardinality" "1",
+//          // OR
+//          Add "attributes.name" {"label": "Name", "datatype": "string", "cardinality": "1"},
+//      ]
+//
+// The aggregated version allows the object store to have naturally a blob with
+// the whole attribute.
+//
+// The question is: Is it important to have addressability at the value level?
+//
+// impl Schema
+//      fn apply(&self, chs: Changeset) -> Schema
+
 #[derive(Debug, Fail)]
 pub enum SchemaError {
     #[fail(display = "Invalid schema.")]
