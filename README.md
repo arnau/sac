@@ -30,6 +30,8 @@ blob hash`.
 * [ ] `sac blob canon --from csv` — Canonicalise item (csv).
 * [x] `sac blob hash` — Hash item (SHA-2 256).
 * [ ] `sac blob hash -a blake2` — Hash item (non SHA-2 256).
+* [ ] `sac blob check --schema <file>` — Check a blob against the given
+    schema.
 
 ### Values
 
