@@ -1,6 +1,6 @@
 # Sac
 
-A set of tools to work with Registers.
+A System of Record toolkit.
 
 * * *
 
